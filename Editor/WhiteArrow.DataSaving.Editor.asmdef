@@ -1,0 +1,18 @@
+{
+    "name": "WhiteArrow.DataSaving.Editor",
+    "rootNamespace": "WhiteArrow.DataSaving.Editor",
+    "references": [
+        "GUID:4f6318e562ba64ed4b60c64ec24e7f59"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

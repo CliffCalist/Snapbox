@@ -1,0 +1,11 @@
+{
+    "name": "com.white-arrow.data-saving",
+    "version": "1.0.0",
+    "displayName": "Data Saving",
+    "description": "Centralized player data storage manager. Can be extended with various storage methods.",
+    "licensesUrl": "https://github.com/CliffCalist/DataSaving/blob/252c0d8306e69f26c10c5ae34cc837f56aa36526/LICENSE",
+    "author": {
+        "name": "White Arrow",
+        "email": "cliffstersprog@gmail.com"
+    }
+}

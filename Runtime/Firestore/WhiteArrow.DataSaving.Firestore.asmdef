@@ -1,0 +1,16 @@
+{
+    "name": "WhiteArrow.DataSaving.Firestore",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4f6318e562ba64ed4b60c64ec24e7f59"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
