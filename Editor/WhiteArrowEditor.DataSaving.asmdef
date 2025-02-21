@@ -1,6 +1,6 @@
 {
-    "name": "WhiteArrow.DataSaving.Editor",
-    "rootNamespace": "WhiteArrow.DataSaving.Editor",
+    "name": "WhiteArrowEditor.DataSaving",
+    "rootNamespace": "WhiteArrowEditor.DataSaving",
     "references": [
         "GUID:4f6318e562ba64ed4b60c64ec24e7f59"
     ],
