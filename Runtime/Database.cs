@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace WhiteArrow.DataSaving
 {
@@ -16,8 +17,11 @@ namespace WhiteArrow.DataSaving
 
 
 
-        public Database(IGameLoader loader, IGameSaver saver, IDatabaseLogger logger)
+        public Database(IGameLoader loader, IGameSaver saver, IDatabaseLogger logger = null)
         {
+            if (logger == null)
+                logger = new GameObject("[DATBASE LOGGER]").AddComponent<DefaultDatabaseLogger>();
+
             _loader = loader ?? throw new ArgumentNullException(nameof(loader));
             _saver = saver ?? throw new ArgumentNullException(nameof(saver));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
