@@ -17,7 +17,7 @@ namespace WhiteArrow.DataSaving
         public static string SavingsFolderPath => Path.Combine(Application.persistentDataPath, "DS");
 
 
-        public LocalSavingMetadata(string dataName, Type dataType, string folderPath)
+        public LocalSavingMetadata(string dataName, Type dataType, string folderPath = null)
         {
             if (string.IsNullOrWhiteSpace(dataName))
                 throw new ArgumentException(nameof(dataName));
@@ -25,9 +25,9 @@ namespace WhiteArrow.DataSaving
 
             DataType = dataType ?? throw new ArgumentNullException(nameof(dataType), "Data type cannot be null.");
 
-            if (string.IsNullOrWhiteSpace(folderPath))
-                throw new ArgumentNullException(nameof(folderPath), "The provided path is null or empty.");
-            CastedFolderPath = Path.Combine(SavingsFolderPath, folderPath);
+            if (!string.IsNullOrWhiteSpace(folderPath))
+                CastedFolderPath = Path.Combine(SavingsFolderPath, folderPath);
+            else CastedFolderPath = SavingsFolderPath;
             FolderPath = CastedFolderPath;
         }
     }
