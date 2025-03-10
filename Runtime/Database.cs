@@ -27,25 +27,38 @@ namespace WhiteArrow.DataSaving
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void UpdateMetadata(params ISavingMetadata[] metadataParams)
+
+
+        public void AddMetadata(ISavingMetadata metadata)
         {
-            var newMetadataDict = metadataParams.ToDictionary(m => m.DataName);
-
-            var keysToRemove = _metadatas.Keys.Where(key => !newMetadataDict.ContainsKey(key)).ToList();
-            foreach (var key in keysToRemove)
+            if (!_metadatas.ContainsKey(metadata.DataName))
             {
-                _metadatas.Remove(key);
-                _cache.Remove(key);
+                _metadatas.Add(metadata.DataName, metadata);
+                _cache[metadata.DataName] = null;
             }
+        }
 
-            foreach (var metadata in metadataParams)
+        public void AddMetadata(ICollection<ISavingMetadata> metadataCollection)
+        {
+            foreach (var metadata in metadataCollection)
+                AddMetadata(metadata);
+        }
+
+
+
+        public void RemoveMetadata(string name)
+        {
+            if (_metadatas.ContainsKey(name))
             {
-                if (!_metadatas.ContainsKey(metadata.DataName))
-                {
-                    _metadatas.Add(metadata.DataName, metadata);
-                    _cache[metadata.DataName] = null;
-                }
+                _metadatas.Remove(name);
+                _cache.Remove(name);
             }
+        }
+
+        public void RemoveMetadata(ICollection<string> namesCollection)
+        {
+            foreach (var name in namesCollection)
+                RemoveMetadata(name);
         }
 
 
