@@ -83,11 +83,8 @@ namespace WhiteArrow.DataSaving
             if (_database != null && !_isOnExitSaved)
             {
                 _isOnExitSaved = true;
-                Task.Run(() =>
-                {
-                    BeforeSave?.Invoke();
-                    _database.SaveAllAsync().Wait();
-                }).Wait();
+                BeforeSave?.Invoke();
+                Task.Run(async () => await _database.SaveAllAsync()).Wait();
             }
         }
     }
