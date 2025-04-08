@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WhiteArrow.DataSaving
+namespace WhiteArrow.SnapboxSDK
 {
-    public class DefaultDatabaseLogger : MonoBehaviour, IDatabaseLogger
+    public class DefaultSnapboxLogger : MonoBehaviour, ISnapboxLogger
     {
         private readonly object _logLock = new();
         private readonly Queue<string> _logMessages = new();

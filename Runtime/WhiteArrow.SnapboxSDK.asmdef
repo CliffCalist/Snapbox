@@ -1,6 +1,6 @@
 {
-    "name": "WhiteArrow.DataSaving",
-    "rootNamespace": "WhiteArrow.DataSaving",
+    "name": "WhiteArrow.SnapboxSDK",
+    "rootNamespace": "WhiteArrow.SnapboxSDK",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -2,18 +2,21 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace WhiteArrow.DataSaving
+namespace WhiteArrow.SnapboxSDK
 {
-    public class DatabaseSaveInvoker : MonoBehaviour
+    public class DefaultSnapboxSaveInvoker : MonoBehaviour
     {
         [SerializeField, Min(0)] private float _timeOffset = 1;
+        [SerializeField, Min(MINIMUM_TIME_RATE_VALUE)] private float _timeRate = 15;
+
+
+
         public float TimeOffset
         {
             get => _timeOffset;
             set => _timeOffset = Mathf.Max(0, value);
         }
 
-        [SerializeField, Min(MINIMUM_TIME_RATE_VALUE)] private float _timeRate = 15;
         public float TimeRate
         {
             get => _timeRate;
@@ -23,19 +26,19 @@ namespace WhiteArrow.DataSaving
 
 
         private bool _isInitialized;
-        private Database _database;
+        private Snapbox _snapbox;
         private float _timeElapsed;
         private bool _isOnExitSaved;
 
         public const float MINIMUM_TIME_RATE_VALUE = 1F;
 
-        public event Action BeforeSave;
+        public event Action PreSave;
 
 
 
-        public void Init(Database database)
+        public void Init(Snapbox snapbox)
         {
-            _database = database ?? throw new ArgumentNullException(nameof(database));
+            _snapbox = snapbox ?? throw new ArgumentNullException(nameof(snapbox));
             _timeElapsed = -_timeOffset;
             _isInitialized = true;
         }
@@ -44,20 +47,20 @@ namespace WhiteArrow.DataSaving
 
         private void Update()
         {
-            if (!_isInitialized || _database == null) return;
+            if (!_isInitialized || _snapbox == null) return;
 
             _timeElapsed += Time.unscaledDeltaTime;
             if (_timeElapsed >= _timeRate)
             {
                 _timeElapsed = 0;
-                SaveDatabase();
+                InvokeSave();
             }
         }
 
-        private void SaveDatabase()
+        private void InvokeSave()
         {
-            BeforeSave?.Invoke();
-            _ = _database.SaveAllAsync();
+            PreSave?.Invoke();
+            _ = _snapbox.SaveAllSnapshotsAsync();
         }
 
 
@@ -80,11 +83,11 @@ namespace WhiteArrow.DataSaving
 
         private void SaveOnExit()
         {
-            if (_database != null && !_isOnExitSaved)
+            if (_snapbox != null && !_isOnExitSaved)
             {
                 _isOnExitSaved = true;
-                BeforeSave?.Invoke();
-                Task.Run(async () => await _database.SaveAllAsync()).Wait();
+                PreSave?.Invoke();
+                Task.Run(async () => await _snapbox.SaveAllSnapshotsAsync()).Wait();
             }
         }
     }

@@ -1,6 +1,6 @@
-namespace WhiteArrow.DataSaving
+namespace WhiteArrow.SnapboxSDK
 {
-    public interface IDatabaseLogger
+    public interface ISnapboxLogger
     {
         void Log(string message);
         void LogError(string message);

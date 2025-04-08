@@ -1,11 +1,11 @@
 using System;
 
-namespace WhiteArrow.DataSaving
+namespace WhiteArrow.SnapboxSDK
 {
-    public interface ISavingMetadata
+    public interface ISnapshotMetadata
     {
-        public string DataName { get; }
-        public Type DataType { get; }
+        public string SnapshotName { get; }
+        public Type SnapshotType { get; }
         public object FolderPath { get; }
         public bool IsChanged { get; set; }
         public bool IsDeleted { get; set; }
