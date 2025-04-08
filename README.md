@@ -1,2 +1,2 @@
-# DataSaving
-Centralized player data storage manager. Can be extended with various storage methods.
+# Snapbox
+A modular snapshot storage and lifecycle management framework for Unity. Designed to work independently of any specific database or game systems.
