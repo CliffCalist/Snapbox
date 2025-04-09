@@ -20,7 +20,7 @@ namespace WhiteArrow.SnapboxSDK
                     return null;
 
                 var fileContent = await File.ReadAllTextAsync(filePath);
-                var snapshot = JsonUtility.FromJson(fileContent, metadata.SnapshotType);
+                var snapshot = JsonUtility.FromJson(fileContent, castedMetadata.SnapshotType);
 
                 if (snapshot == null)
                     throw new InvalidOperationException("Failed to deserialize the snapshot.");
@@ -29,8 +29,7 @@ namespace WhiteArrow.SnapboxSDK
             }
             catch (Exception ex)
             {
-                var filePath = Path.Combine(metadata.FolderPath.ToString(), $"{metadata.SnapshotName}.json");
-                throw new InvalidOperationException($"Error while loading snapshot from {filePath}: {ex.Message}", ex);
+                throw new InvalidOperationException($"Error while loading snapshot with name {metadata.SnapshotName}: {ex.Message}", ex);
             }
         }
     }

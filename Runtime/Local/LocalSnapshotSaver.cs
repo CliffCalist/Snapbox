@@ -24,8 +24,7 @@ namespace WhiteArrow.SnapboxSDK
             }
             catch (Exception ex)
             {
-                var filePath = Path.Combine(metadata.FolderPath.ToString(), $"{metadata.SnapshotName}.json");
-                throw new InvalidOperationException($"Error while saving snapshot to {filePath}: {ex.Message}", ex);
+                throw new InvalidOperationException($"Error while saving snapshot with name {metadata.SnapshotName}: {ex.Message}", ex);
             }
         }
 
@@ -44,7 +43,7 @@ namespace WhiteArrow.SnapboxSDK
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error while deleting snapshot from {metadata.FolderPath}: {ex.Message}", ex);
+                throw new InvalidOperationException($"Error while deleting snapshot with name {metadata.SnapshotName}: {ex.Message}", ex);
             }
         }
     }
