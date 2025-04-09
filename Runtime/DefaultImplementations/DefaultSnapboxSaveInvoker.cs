@@ -6,6 +6,7 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class DefaultSnapboxSaveInvoker : MonoBehaviour
     {
+        [SerializeField] private bool _useOnQuitSaving = false;
         [SerializeField, Min(0)] private float _timeOffset = 1;
         [SerializeField, Min(MINIMUM_TIME_RATE_VALUE)] private float _timeRate = 15;
 
@@ -83,7 +84,7 @@ namespace WhiteArrow.SnapboxSDK
 
         private void SaveOnExit()
         {
-            if (_snapbox != null && !_isOnExitSaved)
+            if (_useOnQuitSaving && _snapbox != null && !_isOnExitSaved)
             {
                 _isOnExitSaved = true;
                 PreSave?.Invoke();
