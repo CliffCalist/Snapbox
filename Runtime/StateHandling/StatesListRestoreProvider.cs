@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WhiteArrow.SnapboxSDK
@@ -13,19 +14,34 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-
         public IEnumerator RestoreAllStates(Action callback = null)
         {
-            foreach (var handler in _handlers)
-                handler.RegisterSnapshotMetadata(_database);
+            var handlers = new List<StateHandler>(_handlers);
+            while (handlers != null && handlers.Count > 0)
+            {
+                RegisterSnapshotMetadatas(handlers);
 
-            var task = Task.Run(async () => await _database.LoadNewSnapshotsAsync());
-            yield return task.IsCompleted;
+                var task = Task.Run(async () => await _database.LoadNewSnapshotsAsync());
+                yield return task.IsCompleted;
 
-            foreach (var handler in _handlers)
-                handler.RestoreState(_database);
+                RestoreStates(handlers);
+
+                handlers = handlers.SelectMany(h => h.GetChildes()).ToList();
+            }
 
             callback?.Invoke();
+        }
+
+        private void RegisterSnapshotMetadatas(IEnumerable<StateHandler> handlers)
+        {
+            foreach (var handler in handlers)
+                handler.RegisterSnapshotMetadata(_database);
+        }
+
+        private void RestoreStates(IEnumerable<StateHandler> handlers)
+        {
+            foreach (var handler in handlers)
+                RestoreStates(handler.GetChildes());
         }
     }
 }

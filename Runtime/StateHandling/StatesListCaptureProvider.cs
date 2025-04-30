@@ -11,8 +11,16 @@ namespace WhiteArrow.SnapboxSDK
 
         public void CaptureAllStates()
         {
-            foreach (var handler in _handlers)
+            CaptureStates(_handlers);
+        }
+
+        private void CaptureStates(IEnumerable<StateHandler> handlers)
+        {
+            foreach (var handler in handlers)
+            {
                 handler.CaptureState(_database);
+                CaptureStates(handler.GetChildes());
+            }
         }
     }
 }
