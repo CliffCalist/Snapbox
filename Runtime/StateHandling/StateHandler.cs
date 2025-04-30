@@ -4,8 +4,8 @@ namespace WhiteArrow.SnapboxSDK
 {
     public abstract class StateHandler : MonoBehaviour
     {
-        internal protected abstract void RegisterSnapshotMetadata(Snapbox snapbox);
-        internal protected abstract void RestoreState(Snapbox snapbox);
-        internal protected abstract void CaptureState(Snapbox snapbox);
+        public abstract void RegisterSnapshotMetadata(Snapbox snapbox);
+        public abstract void RestoreState(Snapbox snapbox);
+        public abstract void CaptureState(Snapbox snapbox);
     }
 }
