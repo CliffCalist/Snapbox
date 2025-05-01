@@ -25,6 +25,7 @@ namespace WhiteArrow.SnapboxSDK
                 yield return task.IsCompleted;
 
                 RestoreStates(nodes);
+                nodes.ForEach(n => n.InitEntity());
 
                 nodes = nodes.SelectMany(h => h.GetChildren()).ToList();
             }
@@ -47,8 +48,6 @@ namespace WhiteArrow.SnapboxSDK
             {
                 if (node is IStateHandler handler)
                     handler.RestoreState(_database);
-
-                RestoreStates(node.GetChildren());
             }
         }
     }

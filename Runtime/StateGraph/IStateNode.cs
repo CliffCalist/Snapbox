@@ -4,6 +4,7 @@ namespace WhiteArrow.SnapboxSDK
 {
     public interface IStateNode
     {
+        void InitEntity();
         IEnumerable<IStateNode> GetChildren();
     }
 }
