@@ -27,6 +27,7 @@ namespace WhiteArrow.SnapboxSDK
             if (_handlers.Contains(handler))
                 return;
 
+            handler.RegisterSnapshotMetadata(_database);
             _handlers.Add(handler);
         }
 
