@@ -35,4 +35,14 @@ namespace WhiteArrow.SnapboxSDK
             return Enumerable.Empty<IStateNode>();
         }
     }
+
+
+
+    public class StateNode<T> : StateNode
+        where T : Component
+    {
+        private T _cached;
+
+        public T Target => _cached ??= GetComponent<T>();
+    }
 }
