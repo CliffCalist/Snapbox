@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WhiteArrow.SnapboxSDK
 {
-    public class StatesListRestoreProvider : StatesGraph
+    public class StateRestoreGraph : StatesGraph
     {
-        public StatesListRestoreProvider(Snapbox database, IEnumerable<IStateNode> roots = null)
+        public StateRestoreGraph(Snapbox database, IEnumerable<IStateNode> roots = null)
             : base(database, roots)
         { }
 
