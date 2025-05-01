@@ -8,6 +8,6 @@ namespace WhiteArrow.SnapboxSDK
         public abstract void RegisterSnapshotMetadata(Snapbox snapbox);
         public abstract void RestoreState(Snapbox snapbox);
         public abstract void CaptureState(Snapbox snapbox);
-        public abstract IEnumerable<StateHandler> GetChildes();
+        public abstract IEnumerable<StateHandler> GetChildren();
     }
 }

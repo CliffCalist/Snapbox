@@ -19,7 +19,7 @@ namespace WhiteArrow.SnapboxSDK
             foreach (var handler in handlers)
             {
                 handler.CaptureState(_database);
-                CaptureStates(handler.GetChildes());
+                CaptureStates(handler.GetChildren());
             }
         }
     }

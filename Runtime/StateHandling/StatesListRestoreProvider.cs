@@ -26,7 +26,7 @@ namespace WhiteArrow.SnapboxSDK
 
                 RestoreStates(handlers);
 
-                handlers = handlers.SelectMany(h => h.GetChildes()).ToList();
+                handlers = handlers.SelectMany(h => h.GetChildren()).ToList();
             }
 
             callback?.Invoke();
@@ -41,7 +41,7 @@ namespace WhiteArrow.SnapboxSDK
         private void RestoreStates(IEnumerable<StateHandler> handlers)
         {
             foreach (var handler in handlers)
-                RestoreStates(handler.GetChildes());
+                RestoreStates(handler.GetChildren());
         }
     }
 }
