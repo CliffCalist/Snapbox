@@ -6,7 +6,7 @@ namespace WhiteArrow.SnapboxSDK
     public class StateNode : MonoBehaviour, IStateNodeParent
     {
         [SerializeField, Min(0)] private int _initIndex;
-        [SerializeField] private List<StateNode> _children;
+        [SerializeField] private List<StateNode> _children = new();
 
 
         private IStateNodeParent _parent;
