@@ -48,7 +48,10 @@ namespace WhiteArrow.SnapboxSDK
         private IEnumerator RunRoutine(Action onComplete)
         {
             yield return RestoreRoutine();
+
             _graphPhase = StateGraphPhase.Capturing;
+            InitEntities();
+
             _isStarted = true;
             onComplete?.Invoke();
         }
@@ -57,10 +60,11 @@ namespace WhiteArrow.SnapboxSDK
         {
             _graphPhase = StateGraphPhase.Restoring;
 
-            var nodes = new List<StateNode>(_roots);
+            var nodes = OrderByInitIndex(_roots);
             while (nodes.Count > 0)
             {
                 var handlers = nodes.OfType<StateHandler>();
+
                 foreach (var n in handlers)
                     n.RegisterSnapshotMetadata(_database);
 
@@ -71,12 +75,31 @@ namespace WhiteArrow.SnapboxSDK
                     n.RestoreState(_database);
 
                 foreach (var n in nodes)
-                    n.InitEntity();
+                    n.PrepeareEntityAfterRestore();
 
                 nodes = nodes.SelectMany(n => n.GetChildren()).ToList();
+                nodes = OrderByInitIndex(nodes);
             }
         }
 
+        private void InitEntities()
+        {
+            var layered = new List<List<StateNode>>();
+            var current = OrderByInitIndex(_roots);
+
+            while (current.Count > 0)
+            {
+                layered.Add(current);
+                current = current.SelectMany(n => n.GetChildren()).Distinct().ToList();
+                current = OrderByInitIndex(current);
+            }
+
+            for (int i = layered.Count - 1; i >= 0; i--)
+            {
+                foreach (var node in layered[i])
+                    node.InitEntity();
+            }
+        }
 
 
         public void CaptureAll()
@@ -95,6 +118,13 @@ namespace WhiteArrow.SnapboxSDK
 
             foreach (var child in node.GetChildren())
                 CaptureRecursive(child);
+        }
+
+
+
+        private List<StateNode> OrderByInitIndex(IEnumerable<StateNode> nodes)
+        {
+            return nodes.OrderBy(n => n.InitIndex).ToList();
         }
     }
 }

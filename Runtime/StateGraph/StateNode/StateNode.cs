@@ -5,6 +5,7 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class StateNode : MonoBehaviour, IStateNodeParent
     {
+        [SerializeField, Min(0)] private int _initIndex;
         [SerializeField] private List<StateNode> _children;
 
 
@@ -12,6 +13,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
         public StateGraphPhase GraphPhase => _parent?.GraphPhase ?? StateGraphPhase.None;
+        public int InitIndex => _initIndex;
 
 
 
@@ -34,7 +36,7 @@ namespace WhiteArrow.SnapboxSDK
         {
             var actualParent = FindActualParent();
 
-            if (_parent == null)
+            if (actualParent == null)
                 Debug.LogWarning($"{name} couldn't find {nameof(IStateNodeParent)} in hierarchy.", gameObject);
 
             if (_parent != null && _parent != actualParent)
@@ -89,6 +91,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
+        public virtual void PrepeareEntityAfterRestore() { }
         public virtual void InitEntity() { }
     }
 

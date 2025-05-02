@@ -9,9 +9,18 @@ namespace WhiteArrowEditor.SnapboxSDK
     {
         public override void OnInspectorGUI()
         {
+            serializedObject.Update();
+
+            var initIndexProp = serializedObject.FindProperty("_initIndex");
+            var childrenProp = serializedObject.FindProperty("_children");
+
+            EditorGUILayout.PropertyField(initIndexProp);
+
             GUI.enabled = false;
-            base.OnInspectorGUI();
+            EditorGUILayout.PropertyField(childrenProp, includeChildren: true);
             GUI.enabled = true;
+
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }
