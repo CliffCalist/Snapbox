@@ -63,7 +63,7 @@ namespace WhiteArrow.SnapboxSDK
             var nodes = OrderByInitIndex(_roots);
             while (nodes.Count > 0)
             {
-                var handlers = nodes.OfType<StateHandler>();
+                var handlers = nodes.OfType<IStateHandler>();
 
                 foreach (var n in handlers)
                     n.RegisterSnapshotMetadata(_database);
@@ -113,7 +113,7 @@ namespace WhiteArrow.SnapboxSDK
 
         private void CaptureRecursive(StateNode node)
         {
-            if (node is StateHandler handler)
+            if (node is IStateHandler handler)
                 handler.CaptureState(_database);
 
             foreach (var child in node.GetChildren())
