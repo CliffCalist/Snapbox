@@ -48,7 +48,7 @@ namespace WhiteArrow.SnapboxSDK
 
         private IStateNodeParent FindActualParent()
         {
-            var current = transform;
+            var current = transform.parent;
             while (current != null)
             {
                 if (current.TryGetComponent<IStateNodeParent>(out var parent))
