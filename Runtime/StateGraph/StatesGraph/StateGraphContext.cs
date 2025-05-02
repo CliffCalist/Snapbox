@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
 {
-    [CreateAssetMenu(fileName = "StateGraphContext", menuName = "Snapbox/StateGraphContext")]
-    public class StateGraphContext : ScriptableObject
+    public class StateGraphContext : MonoBehaviour
     {
         public StateGraphPhase Phase;
     }

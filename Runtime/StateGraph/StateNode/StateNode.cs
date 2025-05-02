@@ -10,21 +10,28 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public void SetContext(StateGraphContext context)
-        {
-            _context = context ?? throw new System.ArgumentNullException(nameof(context));
-        }
-
-
-
         private void Awake()
         {
+            _context = FindContextInParents();
             if (_context == null)
-                throw new System.Exception("The context is not set.");
-
-            if (_context.Phase == StateGraphPhase.Capturing)
-                InitEntity();
+                Debug.LogWarning($"{name} couldn't find StateGraphContext in hierarchy.", gameObject);
         }
+
+        private StateGraphContext FindContextInParents()
+        {
+            var current = transform;
+            while (current != null)
+            {
+                if (current.TryGetComponent<StateGraphContext>(out var context))
+                    return context;
+
+                current = current.parent;
+            }
+
+            return null;
+        }
+
+
 
         public virtual void InitEntity() { }
 
