@@ -4,7 +4,7 @@ using WhiteArrow.SnapboxSDK;
 
 namespace WhiteArrowEditor.SnapboxSDK
 {
-    [CustomEditor(typeof(StateGraphContext))]
+    [CustomEditor(typeof(StateGraph))]
     public class StateGraphContextEditor : Editor
     {
         public override void OnInspectorGUI()
