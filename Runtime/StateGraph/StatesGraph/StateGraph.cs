@@ -49,6 +49,7 @@ namespace WhiteArrow.SnapboxSDK
         {
             yield return RestoreRoutine();
             _graphPhase = StateGraphPhase.Capturing;
+            _isStarted = true;
             onComplete?.Invoke();
         }
 
