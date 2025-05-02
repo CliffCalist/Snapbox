@@ -5,8 +5,10 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class StateNode : MonoBehaviour, IStateNodeParent
     {
+        [SerializeField] private List<StateNode> _children;
+
+
         private IStateNodeParent _parent;
-        private readonly List<StateNode> _children = new();
 
 
         public StateGraphPhase GraphPhase => _parent?.GraphPhase ?? StateGraphPhase.None;
