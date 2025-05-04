@@ -3,15 +3,16 @@ using WhiteArrow.SnapboxSDK;
 
 namespace WhiteArrowEditor.SnapboxSDK
 {
-    [CustomEditor(typeof(StateNode), true)]
-    public class StateNodeEditor : Editor
+    [CustomEditor(typeof(StateGraph))]
+    public class StateGraphEditor : Editor
     {
         private readonly string[] READ_ONLY_FIELD_NAMES =
         {
             "m_Script",
             "size",
-            "_initIndex",
-            "_children"
+            "_isStarted",
+            "_graphPhase",
+            "_roots"
         };
 
 
