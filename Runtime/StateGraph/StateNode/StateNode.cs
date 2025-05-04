@@ -94,7 +94,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        protected List<string> BuildContextualFolderPath(string selfFolderPath = null)
+        public List<string> BuildContextualFolderPath(string selfFolderPath = null)
         {
             var path = new List<string>();
 
@@ -107,7 +107,7 @@ namespace WhiteArrow.SnapboxSDK
             return path;
         }
 
-        protected string BuildContextualName(string selfName)
+        public string BuildContextualName(string selfName)
         {
             if (!IsStringNotEmpty(selfName))
                 throw new ArgumentNullException(nameof(selfName));
