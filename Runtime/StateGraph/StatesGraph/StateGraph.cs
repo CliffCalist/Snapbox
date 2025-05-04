@@ -12,12 +12,15 @@ namespace WhiteArrow.SnapboxSDK
         [SerializeField] private bool _isStarted;
         [SerializeField] private StateGraphPhase _graphPhase;
         [SerializeField] private List<StateNode> _roots;
+        [SerializeField] private string _rootContext;
+
 
         private Snapbox _database;
 
 
         public bool IsStarted => _isStarted;
         public StateGraphPhase GraphPhase => _graphPhase;
+        public string Context => _rootContext;
 
 
 

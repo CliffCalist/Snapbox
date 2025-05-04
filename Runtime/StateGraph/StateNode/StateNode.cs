@@ -7,6 +7,7 @@ namespace WhiteArrow.SnapboxSDK
     {
         [SerializeField, Min(0)] private int _initIndex;
         [SerializeField] private List<StateNode> _children = new();
+        [SerializeField] private string _selfContext;
 
 
         private IStateNodeParent _parent;
@@ -14,6 +15,7 @@ namespace WhiteArrow.SnapboxSDK
 
         public StateGraphPhase GraphPhase => _parent?.GraphPhase ?? StateGraphPhase.None;
         public int InitIndex => _initIndex;
+        public string Context => BuildContext(_parent?.Context, _selfContext);
 
 
 
@@ -93,6 +95,30 @@ namespace WhiteArrow.SnapboxSDK
 
         public virtual void PrepeareEntityAfterRestore() { }
         public virtual void InitEntity() { }
+
+
+
+        public static string BuildContext(params string[] contexts)
+        {
+            var outputContext = string.Empty;
+
+            foreach (var context in contexts)
+            {
+                if (IsContextExist(context))
+                {
+                    if (outputContext.Length > 0)
+                        outputContext += $"_{context}";
+                    else outputContext = context;
+                }
+            }
+
+            return outputContext;
+        }
+
+        public static bool IsContextExist(string context)
+        {
+            return context != null && !string.IsNullOrEmpty(context) && !string.IsNullOrWhiteSpace(context);
+        }
     }
 
 
