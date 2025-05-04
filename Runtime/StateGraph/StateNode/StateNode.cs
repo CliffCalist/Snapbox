@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -93,6 +94,31 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
+        protected List<string> BuildContextualFolderPath(string selfFolderPath = null)
+        {
+            var path = new List<string>();
+
+            if (IsStringNotEmpty(Context))
+                path.Add(Context);
+
+            if (IsStringNotEmpty(selfFolderPath))
+                path.Add(selfFolderPath);
+
+            return path;
+        }
+
+        protected string BuildContextualName(string selfName)
+        {
+            if (!IsStringNotEmpty(selfName))
+                throw new ArgumentNullException(nameof(selfName));
+
+            if (IsStringNotEmpty(Context))
+                return $"{Context}_{selfName}";
+            else return selfName;
+        }
+
+
+
         public virtual void PrepeareEntityAfterRestore() { }
         public virtual void InitEntity() { }
 
@@ -104,7 +130,7 @@ namespace WhiteArrow.SnapboxSDK
 
             foreach (var context in contexts)
             {
-                if (IsContextExist(context))
+                if (IsStringNotEmpty(context))
                 {
                     if (outputContext.Length > 0)
                         outputContext += $"_{context}";
@@ -115,7 +141,7 @@ namespace WhiteArrow.SnapboxSDK
             return outputContext;
         }
 
-        public static bool IsContextExist(string context)
+        public static bool IsStringNotEmpty(string context)
         {
             return context != null && !string.IsNullOrEmpty(context) && !string.IsNullOrWhiteSpace(context);
         }
