@@ -14,6 +14,7 @@ namespace WhiteArrow.SnapboxSDK
         private IStateNodeParent _parent;
 
 
+        public Snapbox Database => _parent?.Database;
         public StateGraphPhase GraphPhase => _parent?.GraphPhase ?? StateGraphPhase.None;
         public int InitIndex => _initIndex;
         public string Context => BuildContext(_parent?.Context, _selfContext);
@@ -25,7 +26,12 @@ namespace WhiteArrow.SnapboxSDK
             ValidateParent();
 
             if (GraphPhase == StateGraphPhase.Capturing)
+            {
+                if (this is IStateHandler handler)
+                    handler.RegisterSnapshotMetadata();
+
                 InitEntity();
+            }
         }
 
 

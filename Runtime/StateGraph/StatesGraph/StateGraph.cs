@@ -19,6 +19,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
         public bool IsStarted => _isStarted;
+        public Snapbox Database => _database;
         public StateGraphPhase GraphPhase => _graphPhase;
         public string Context => _rootContext;
 
@@ -68,17 +69,17 @@ namespace WhiteArrow.SnapboxSDK
             {
                 var handlers = nodes.OfType<IStateHandler>();
 
-                foreach (var n in handlers)
-                    n.RegisterSnapshotMetadata(_database);
+                foreach (var handler in handlers)
+                    handler.RegisterSnapshotMetadata();
 
                 var task = Task.Run(async () => await _database.LoadNewSnapshotsAsync());
                 yield return new WaitWhile(() => !task.IsCompleted);
 
-                foreach (var n in handlers)
-                    n.RestoreState(_database);
+                foreach (var handler in handlers)
+                    handler.RestoreState();
 
-                foreach (var n in nodes)
-                    n.PrepeareEntityAfterRestore();
+                foreach (var node in nodes)
+                    node.PrepeareEntityAfterRestore();
 
                 nodes = nodes.SelectMany(n => n.GetChildren()).ToList();
                 nodes = OrderByInitIndex(nodes);
@@ -117,7 +118,7 @@ namespace WhiteArrow.SnapboxSDK
         private void CaptureRecursive(StateNode node)
         {
             if (node is IStateHandler handler)
-                handler.CaptureState(_database);
+                handler.CaptureState();
 
             foreach (var child in node.GetChildren())
                 CaptureRecursive(child);
