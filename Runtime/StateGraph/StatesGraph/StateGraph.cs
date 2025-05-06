@@ -55,6 +55,7 @@ namespace WhiteArrow.SnapboxSDK
             yield return RestoreRoutine();
 
             LogGraphStructure();
+
             _graphPhase = StateGraphPhase.Capturing;
             InitEntities();
 
@@ -66,26 +67,44 @@ namespace WhiteArrow.SnapboxSDK
         {
             _graphPhase = StateGraphPhase.Restoring;
 
+            var restoreLog = new StringBuilder();
+            restoreLog.AppendLine("StateGraph Restoring:");
+
+            var layerIndex = 0;
+
             var nodes = OrderByInitIndex(_roots);
             while (nodes.Count > 0)
             {
+                restoreLog.AppendLine($"\nLayer {layerIndex++}:");
+
                 var handlers = nodes.OfType<IStateHandler>();
 
                 foreach (var handler in handlers)
+                {
                     handler.RegisterSnapshotMetadata();
+                    AppendNodeActionLog("Register", handler as StateNode, restoreLog);
+                }
 
                 var task = Task.Run(async () => await _database.LoadNewSnapshotsAsync());
                 yield return new WaitWhile(() => !task.IsCompleted);
 
                 foreach (var handler in handlers)
+                {
                     handler.RestoreState();
+                    AppendNodeActionLog("Restore", handler as StateNode, restoreLog);
+                }
 
                 foreach (var node in nodes)
+                {
                     node.PrepeareEntityAfterRestore();
+                    AppendNodeActionLog("Prepeare", node, restoreLog);
+                }
 
                 nodes = nodes.SelectMany(n => n.GetChildren()).ToList();
                 nodes = OrderByInitIndex(nodes);
             }
+
+            Debug.Log(restoreLog.ToString());
         }
 
         private void InitEntities()
@@ -106,6 +125,7 @@ namespace WhiteArrow.SnapboxSDK
                     node.InitEntity();
             }
         }
+
 
 
         public void CaptureAll()
@@ -161,6 +181,14 @@ namespace WhiteArrow.SnapboxSDK
 
             foreach (var child in node.GetChildren())
                 AppendNodeForGraphLog(child, indent + 1, visited, builder);
+        }
+
+
+
+        private void AppendNodeActionLog(string action, StateNode node, StringBuilder logBuilder)
+        {
+            var context = string.IsNullOrEmpty(node.Context) ? "-" : node.Context;
+            logBuilder.AppendLine($"[{action}] {node.name} ({context})");
         }
     }
 }
