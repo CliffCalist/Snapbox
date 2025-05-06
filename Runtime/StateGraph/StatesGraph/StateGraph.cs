@@ -135,6 +135,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
+        [ContextMenu("Log Graph Structure")]
         public void LogGraphStructure()
         {
             var builder = new StringBuilder();
