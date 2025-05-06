@@ -100,6 +100,9 @@ namespace WhiteArrow.SnapboxSDK
                     AppendNodeActionLog("Prepeare", node, restoreLog);
                 }
 
+                // Wait for Unity to call Awake() so newly created nodes can register into the graph
+                yield return null;
+
                 nodes = nodes.SelectMany(n => n.GetChildren()).ToList();
                 nodes = OrderByInitIndex(nodes);
             }
