@@ -135,7 +135,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        private void LogGraphStructure()
+        public void LogGraphStructure()
         {
             var builder = new StringBuilder();
             builder.AppendLine("StateGraph Structure:");
