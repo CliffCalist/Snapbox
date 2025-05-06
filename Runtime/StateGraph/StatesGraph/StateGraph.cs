@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -53,6 +54,7 @@ namespace WhiteArrow.SnapboxSDK
         {
             yield return RestoreRoutine();
 
+            LogGraphStructure();
             _graphPhase = StateGraphPhase.Capturing;
             InitEntities();
 
@@ -129,6 +131,35 @@ namespace WhiteArrow.SnapboxSDK
         private List<StateNode> OrderByInitIndex(IEnumerable<StateNode> nodes)
         {
             return nodes.OrderBy(n => n.InitIndex).ToList();
+        }
+
+
+
+        private void LogGraphStructure()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("StateGraph Structure:");
+
+            var visited = new HashSet<StateNode>();
+            foreach (var root in _roots)
+                AppendNodeForGraphLog(root, 0, visited, builder);
+
+            Debug.Log(builder.ToString());
+        }
+
+        private void AppendNodeForGraphLog(StateNode node, int indent, HashSet<StateNode> visited, StringBuilder builder)
+        {
+            if (node == null || visited.Contains(node))
+                return;
+
+            visited.Add(node);
+
+            var context = string.IsNullOrEmpty(node.Context) ? "-" : node.Context;
+            var indentStr = new string(' ', indent * 2);
+            builder.AppendLine($"{indentStr}- {node.name} [{context}]");
+
+            foreach (var child in node.GetChildren())
+                AppendNodeForGraphLog(child, indent + 1, visited, builder);
         }
     }
 }
