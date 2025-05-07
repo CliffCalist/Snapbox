@@ -4,6 +4,6 @@ namespace WhiteArrow.SnapboxSDK
 {
     public interface IContextPathDecorator
     {
-        IEnumerable<string> GetContextPath(bool includeSelf = true);
+        IEnumerable<string> GetContextPath();
     }
 }

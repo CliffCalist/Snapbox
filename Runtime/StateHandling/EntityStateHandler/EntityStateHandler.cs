@@ -5,13 +5,15 @@ using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
 {
-    public class EntityStateHandler : ContextPathDecorator
+    public class EntityStateHandler : MonoBehaviour
     {
         [SerializeField] private bool _isInitialized;
         [SerializeField] private List<EntityStateHandler> _dependencies;
         [SerializeField] private List<EntityStateHandler> _children;
 
 
+
+        private Transform _transform;
 
         private SceneContext _sceneContextCached;
 
@@ -75,9 +77,17 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
+        public IEnumerable<string> GetContextPath()
+        {
+            if (_transform == null)
+                _transform = transform;
+
+            return ContextPathDecorator.GetContextPathFor(_transform);
+        }
+
         public string GetContextualName(string name)
         {
-            var contextPath = GetContextPath(false).Append(name).ToArray();
+            var contextPath = GetContextPath().Append(name).ToArray();
             return ContextPathUtilities.PathToName(contextPath);
         }
 

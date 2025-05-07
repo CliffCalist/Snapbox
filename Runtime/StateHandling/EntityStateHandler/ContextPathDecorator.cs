@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
@@ -9,7 +10,19 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public IEnumerable<string> GetContextPath(bool includeSelf = true)
+        public IEnumerable<string> GetContextPath()
+        {
+            var path = GetContextPathFor(transform);
+
+            if (ContextPathUtilities.IsStringNotEmpty(_selfContextPath))
+                path.Append(_selfContextPath);
+
+            return path;
+        }
+
+
+
+        public static IEnumerable<string> GetContextPathFor(Transform transform)
         {
             var parent = transform.parent;
             var path = new List<string>();
@@ -25,14 +38,7 @@ namespace WhiteArrow.SnapboxSDK
                 parent = parent.parent;
             }
 
-            if (includeSelf)
-            {
-                if (ContextPathUtilities.IsStringNotEmpty(_selfContextPath))
-                    path.Add(_selfContextPath);
-
-                return path;
-            }
-            else return path;
+            return path;
         }
     }
 }
