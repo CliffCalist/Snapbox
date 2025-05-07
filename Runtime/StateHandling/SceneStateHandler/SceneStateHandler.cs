@@ -134,5 +134,20 @@ namespace WhiteArrow.SnapboxSDK
                 CaptureStateRecursive(children);
             }
         }
+
+
+
+        public void AddRootHandler(EntityStateHandler handler)
+        {
+            if (_rootHandlers.Contains(handler))
+                return;
+
+            _rootHandlers.Add(handler);
+        }
+
+        public void RemoveRootHandler(EntityStateHandler handler)
+        {
+            _rootHandlers.Remove(handler);
+        }
     }
 }
