@@ -5,7 +5,7 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class ContextPathDecorator : MonoBehaviour, IContextPathDecorator
     {
-        [SerializeField] private string _selfContext;
+        [SerializeField] private string _selfContextPath;
 
 
 
@@ -27,8 +27,8 @@ namespace WhiteArrow.SnapboxSDK
 
             if (includeSelf)
             {
-                if (ContextPathUtilities.IsStringNotEmpty(_selfContext))
-                    path.Add(_selfContext);
+                if (ContextPathUtilities.IsStringNotEmpty(_selfContextPath))
+                    path.Add(_selfContextPath);
 
                 return path;
             }

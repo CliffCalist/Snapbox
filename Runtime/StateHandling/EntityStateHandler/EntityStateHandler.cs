@@ -75,10 +75,10 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public string GetContextualName(string selfName)
+        public string GetContextualName(string name)
         {
-            var contextPath = GetContextPath().Append(selfName).ToArray();
-            return ContextPathUtilities.CollectionToString(contextPath);
+            var contextPath = GetContextPath(false).Append(name).ToArray();
+            return ContextPathUtilities.PathToName(contextPath);
         }
 
 

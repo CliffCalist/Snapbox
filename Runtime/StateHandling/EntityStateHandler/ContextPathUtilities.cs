@@ -2,7 +2,7 @@ namespace WhiteArrow.SnapboxSDK
 {
     public static class ContextPathUtilities
     {
-        public static string CollectionToString(params string[] contextPath)
+        public static string PathToName(params string[] contextPath)
         {
             var outputContext = string.Empty;
 
