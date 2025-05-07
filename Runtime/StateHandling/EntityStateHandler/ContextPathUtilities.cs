@@ -2,11 +2,11 @@ namespace WhiteArrow.SnapboxSDK
 {
     public static class ContextPathUtilities
     {
-        public static string CollectionToString(params string[] contexts)
+        public static string CollectionToString(params string[] contextPath)
         {
             var outputContext = string.Empty;
 
-            foreach (var context in contexts)
+            foreach (var context in contextPath)
             {
                 if (IsStringNotEmpty(context))
                 {

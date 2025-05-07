@@ -1,6 +1,6 @@
 namespace WhiteArrow.SnapboxSDK
 {
-    public static class LocalInitializerExtensions
+    public static class LocalEntityStateHandlerExtensions
     {
         public static string GetLocalContextPath(this EntityStateHandler node, bool includeSelf = true)
         {
