@@ -14,46 +14,44 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        private Snapbox _database;
-
-
-
-        public void Run(Snapbox snapbox, Action onComplete = null)
+        public void RestoreState(Snapbox database, Action onComplete = null)
         {
+            if (database is null)
+                throw new ArgumentNullException(nameof(database));
+
             if (_context == null)
                 throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be runned.");
 
             if (_context.RestoringPhase != StateRestoringPhase.None)
                 throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be runned twice.");
 
-            _database = snapbox ?? throw new ArgumentNullException(nameof(snapbox));
 
-            _context.SetDatabase(_database);
+            _context.SetDatabase(database);
             _context.MarkRestoringRunningPhase();
 
-            StartCoroutine(RunRoutine(() =>
+            StartCoroutine(RestoreStateRoutine(() =>
             {
                 _context.MarkRestoringFinishedPhase();
                 onComplete?.Invoke();
             }));
         }
 
-        private IEnumerator RunRoutine(Action onComplete)
+        private IEnumerator RestoreStateRoutine(Action onComplete)
         {
             var root = SortByDependencies(_rootHandlers);
 
-            yield return RestoreStateRecursive(root);
-            IniteRecursive(root);
+            yield return RestoreEntityStateRecursive(root);
+            InitializeEntityRecursive(root);
 
             onComplete?.Invoke();
         }
 
-        private IEnumerator RestoreStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
+        private IEnumerator RestoreEntityStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
         {
             foreach (var handler in rootHandlers)
                 handler.RegisterSnapshotMetadata();
 
-            var task = Task.Run(async () => await _database.LoadNewSnapshotsAsync());
+            var task = Task.Run(async () => await _context.Database.LoadNewSnapshotsAsync());
             yield return new WaitWhile(() => !task.IsCompleted);
 
             foreach (var handler in rootHandlers)
@@ -62,11 +60,11 @@ namespace WhiteArrow.SnapboxSDK
 
                 var children = handler.GetChildren();
                 children = SortByDependencies(children);
-                yield return RestoreStateRecursive(children);
+                yield return RestoreEntityStateRecursive(children);
             }
         }
 
-        private void IniteRecursive(IEnumerable<EntityStateHandler> rootHandlers)
+        private void InitializeEntityRecursive(IEnumerable<EntityStateHandler> rootHandlers)
         {
             var layered = new List<List<EntityStateHandler>>();
             var current = new List<EntityStateHandler>(rootHandlers);
@@ -117,6 +115,24 @@ namespace WhiteArrow.SnapboxSDK
                 Visit(init);
 
             return result;
+        }
+
+
+
+        public void CaptureState()
+        {
+            CaptureStateRecursive(_rootHandlers);
+        }
+
+        private void CaptureStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
+        {
+            foreach (var handler in rootHandlers)
+            {
+                handler.CaptureState();
+
+                var children = handler.GetChildren();
+                CaptureStateRecursive(children);
+            }
         }
     }
 }
