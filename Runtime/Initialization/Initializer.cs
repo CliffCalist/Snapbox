@@ -83,9 +83,9 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        internal virtual void RegisterSnapshotMetadata() { }
-        internal virtual void RestoreState() { }
-        internal virtual void Initialize() { }
+        internal protected virtual void RegisterSnapshotMetadata() { }
+        internal protected virtual void RestoreState() { }
+        internal protected virtual void Initialize() { }
     }
 
 
