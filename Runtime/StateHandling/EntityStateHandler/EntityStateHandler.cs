@@ -13,9 +13,12 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        private Transform _transform;
-
+        private Transform _transformCached;
         private SceneContext _sceneContextCached;
+
+
+
+        protected Transform _transform => _transformCached ??= transform;
 
         protected SceneContext _sceneContext
         {
@@ -55,7 +58,14 @@ namespace WhiteArrow.SnapboxSDK
 
         internal IEnumerable<EntityStateHandler> GetDependencies()
         {
-            return _dependencies.Concat(GetAdditionalDependencies());
+            return _dependencies
+                .Concat(GetDependenciesFromDecorator())
+                .Concat(GetAdditionalDependencies());
+        }
+
+        private IEnumerable<EntityStateHandler> GetDependenciesFromDecorator()
+        {
+            return DependencyDecorator.GetDependenciesFor(_transform);
         }
 
         protected virtual IEnumerable<EntityStateHandler> GetAdditionalDependencies()
@@ -79,9 +89,6 @@ namespace WhiteArrow.SnapboxSDK
 
         public IEnumerable<string> GetContextPath()
         {
-            if (_transform == null)
-                _transform = transform;
-
             return ContextPathDecorator.GetContextPathFor(_transform);
         }
 
