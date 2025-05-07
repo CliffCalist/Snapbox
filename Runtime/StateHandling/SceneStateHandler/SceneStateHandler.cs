@@ -7,11 +7,10 @@ using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
 {
-    public class InitPipeline : MonoBehaviour
+    public class SceneStateHandler : MonoBehaviour
     {
-        [SerializeField] private bool _isStarted;
-        [SerializeField] private InitContext _context;
-        [SerializeField] private List<Initializer> _rootInitializers;
+        [SerializeField] private SceneContext _context;
+        [SerializeField] private List<EntityStateHandler> _rootHandlers;
 
 
 
@@ -21,60 +20,56 @@ namespace WhiteArrow.SnapboxSDK
 
         public void Run(Snapbox snapbox, Action onComplete = null)
         {
-            if (_isStarted)
-                throw new InvalidOperationException($"{nameof(InitPipeline)} is already runned.");
-
             if (_context == null)
-                throw new NullReferenceException($"{nameof(InitContext)} is not set. The {nameof(InitPipeline)} can't be runned.");
+                throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be runned.");
 
-            if (_context.State != InitState.None)
-                throw new InvalidOperationException($"{nameof(InitPipeline)} can't be runned twice.");
+            if (_context.RestoringPhase != StateRestoringPhase.None)
+                throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be runned twice.");
 
             _database = snapbox ?? throw new ArgumentNullException(nameof(snapbox));
 
             _context.SetDatabase(_database);
-            _context.MarkRunningState();
+            _context.MarkRestoringRunningPhase();
 
             StartCoroutine(RunRoutine(() =>
             {
-                _context.MarkFinishedState();
+                _context.MarkRestoringFinishedPhase();
                 onComplete?.Invoke();
             }));
         }
 
         private IEnumerator RunRoutine(Action onComplete)
         {
-            var root = SortByDependencies(_rootInitializers);
+            var root = SortByDependencies(_rootHandlers);
 
             yield return RestoreStateRecursive(root);
             IniteRecursive(root);
 
-            _isStarted = true;
             onComplete?.Invoke();
         }
 
-        private IEnumerator RestoreStateRecursive(IEnumerable<Initializer> initializers)
+        private IEnumerator RestoreStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
         {
-            foreach (var initializer in initializers)
-                initializer.RegisterSnapshotMetadata();
+            foreach (var handler in rootHandlers)
+                handler.RegisterSnapshotMetadata();
 
             var task = Task.Run(async () => await _database.LoadNewSnapshotsAsync());
             yield return new WaitWhile(() => !task.IsCompleted);
 
-            foreach (var initializer in initializers)
+            foreach (var handler in rootHandlers)
             {
-                initializer.RestoreState();
+                handler.RestoreState();
 
-                var children = initializer.GetChildren();
+                var children = handler.GetChildren();
                 children = SortByDependencies(children);
                 yield return RestoreStateRecursive(children);
             }
         }
 
-        private void IniteRecursive(IEnumerable<Initializer> initializers)
+        private void IniteRecursive(IEnumerable<EntityStateHandler> rootHandlers)
         {
-            var layered = new List<List<Initializer>>();
-            var current = new List<Initializer>(initializers);
+            var layered = new List<List<EntityStateHandler>>();
+            var current = new List<EntityStateHandler>(rootHandlers);
 
             while (current.Count > 0)
             {
@@ -90,13 +85,13 @@ namespace WhiteArrow.SnapboxSDK
             }
         }
 
-        private IEnumerable<Initializer> SortByDependencies(IEnumerable<Initializer> initializers)
+        private IEnumerable<EntityStateHandler> SortByDependencies(IEnumerable<EntityStateHandler> rootHandlers)
         {
-            var result = new List<Initializer>();
-            var visited = new HashSet<Initializer>();
-            var visiting = new HashSet<Initializer>();
+            var result = new List<EntityStateHandler>();
+            var visited = new HashSet<EntityStateHandler>();
+            var visiting = new HashSet<EntityStateHandler>();
 
-            void Visit(Initializer node)
+            void Visit(EntityStateHandler node)
             {
                 if (visited.Contains(node))
                     return;
@@ -118,7 +113,7 @@ namespace WhiteArrow.SnapboxSDK
                 result.Add(node);
             }
 
-            foreach (var init in initializers)
+            foreach (var init in rootHandlers)
                 Visit(init);
 
             return result;

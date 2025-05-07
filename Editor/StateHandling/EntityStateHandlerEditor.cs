@@ -3,8 +3,8 @@ using WhiteArrow.SnapboxSDK;
 
 namespace WhiteArrowEditor.SnapboxSDK
 {
-    [CustomEditor(typeof(Initializer), true)]
-    public class InitializerEditor : Editor
+    [CustomEditor(typeof(EntityStateHandler), true)]
+    public class EntityStateHandlerEditor : Editor
     {
         public override void OnInspectorGUI()
         {

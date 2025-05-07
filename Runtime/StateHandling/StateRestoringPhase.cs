@@ -1,6 +1,6 @@
 namespace WhiteArrow.SnapboxSDK
 {
-    public enum InitState
+    public enum StateRestoringPhase
     {
         None,
         Running,
