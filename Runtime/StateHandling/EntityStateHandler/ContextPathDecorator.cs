@@ -15,7 +15,7 @@ namespace WhiteArrow.SnapboxSDK
             var path = GetContextPathFor(transform);
 
             if (ContextPathUtilities.IsStringNotEmpty(_selfContextPath))
-                path.Append(_selfContextPath);
+                path = path.Append(_selfContextPath);
 
             return path;
         }
