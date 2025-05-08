@@ -50,6 +50,7 @@ namespace WhiteArrow.SnapboxSDK
             if (_sceneContext.RestoringPhase == StateRestoringPhase.Finished)
             {
                 RegisterSnapshotMetadata();
+                RestoreState();
                 Initialize();
             }
         }
