@@ -55,9 +55,10 @@ namespace WhiteArrow.SnapboxSDK
             yield return new WaitWhile(() => !task.IsCompleted);
 
             foreach (var handler in rootHandlers)
-            {
                 handler.RestoreState();
 
+            foreach (var handler in rootHandlers)
+            {
                 var children = handler.GetChildren();
                 children = SortByDependencies(children);
                 yield return RestoreEntityStateRecursive(children);
