@@ -7,6 +7,8 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class EntityStateHandler : MonoBehaviour
     {
+        [SerializeField] private bool _isRegistered;
+        [SerializeField] private bool _isRestored;
         [SerializeField] private bool _isInitialized;
         [SerializeField] private List<EntityStateHandler> _dependencies;
         [SerializeField] private List<EntityStateHandler> _children;
@@ -36,6 +38,16 @@ namespace WhiteArrow.SnapboxSDK
                 return _sceneContextCached;
             }
         }
+
+
+
+        public bool IsRegistered => _isRegistered;
+        public bool IsRestored => _isRestored;
+        public bool IsInitialized => _isInitialized;
+
+
+
+        public event Action<EntityStateHandler> NewChildernAdded;
 
 
 
@@ -86,6 +98,12 @@ namespace WhiteArrow.SnapboxSDK
             return Enumerable.Empty<EntityStateHandler>();
         }
 
+        protected void OnNewChildrenCreated()
+        {
+            if (_sceneContext.RestoringPhase == StateRestoringPhase.Running)
+                NewChildernAdded?.Invoke(this);
+        }
+
 
 
         public IEnumerable<string> GetContextPath()
@@ -101,9 +119,36 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        internal protected virtual void RegisterSnapshotMetadata() { }
-        internal protected virtual void RestoreState() { }
-        internal protected virtual void Initialize() { }
+        internal void RegisterSnapshotMetadata()
+        {
+            RegisterSnapshotMetadataCore();
+            _isRegistered = true;
+        }
+
+        protected virtual void RegisterSnapshotMetadataCore() { }
+
+
+
+        internal void RestoreState()
+        {
+            RestoreStateCore();
+            _isRestored = true;
+        }
+
+        internal protected virtual void RestoreStateCore() { }
+
+
+
+        internal void Initialize()
+        {
+            InitializeCore();
+            _isInitialized = true;
+        }
+
+        protected virtual void InitializeCore() { }
+
+
+
         internal protected virtual void CaptureState() { }
     }
 

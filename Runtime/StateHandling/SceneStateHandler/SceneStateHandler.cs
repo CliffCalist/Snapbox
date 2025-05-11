@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
@@ -11,6 +9,21 @@ namespace WhiteArrow.SnapboxSDK
     {
         [SerializeField] private SceneContext _context;
         [SerializeField] private List<EntityStateHandler> _rootHandlers;
+
+
+
+        public void AddRootHandler(EntityStateHandler handler)
+        {
+            if (_rootHandlers.Contains(handler))
+                return;
+
+            _rootHandlers.Add(handler);
+        }
+
+        public void RemoveRootHandler(EntityStateHandler handler)
+        {
+            _rootHandlers.Remove(handler);
+        }
 
 
 
@@ -29,41 +42,18 @@ namespace WhiteArrow.SnapboxSDK
             _context.SetDatabase(database);
             _context.MarkRestoringRunningPhase();
 
-            StartCoroutine(RestoreStateRoutine(() =>
+            StartCoroutine(SceneRestorationRunner.Run(_context, _rootHandlers, () =>
             {
                 _context.MarkRestoringFinishedPhase();
+
+                var root = SortByDependencies(_rootHandlers);
+                InitializeEntityRecursive(root);
+
                 onComplete?.Invoke();
             }));
         }
 
-        private IEnumerator RestoreStateRoutine(Action onComplete)
-        {
-            var root = SortByDependencies(_rootHandlers);
 
-            yield return RestoreEntityStateRecursive(root);
-            InitializeEntityRecursive(root);
-
-            onComplete?.Invoke();
-        }
-
-        private IEnumerator RestoreEntityStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
-        {
-            foreach (var handler in rootHandlers)
-                handler.RegisterSnapshotMetadata();
-
-            var task = Task.Run(async () => await _context.Database.LoadNewSnapshotsAsync());
-            yield return new WaitWhile(() => !task.IsCompleted);
-
-            foreach (var handler in rootHandlers)
-                handler.RestoreState();
-
-            foreach (var handler in rootHandlers)
-            {
-                var children = handler.GetChildren();
-                children = SortByDependencies(children);
-                yield return RestoreEntityStateRecursive(children);
-            }
-        }
 
         private void InitializeEntityRecursive(IEnumerable<EntityStateHandler> rootHandlers)
         {
@@ -84,7 +74,27 @@ namespace WhiteArrow.SnapboxSDK
             }
         }
 
-        private IEnumerable<EntityStateHandler> SortByDependencies(IEnumerable<EntityStateHandler> rootHandlers)
+
+
+        public void CaptureState()
+        {
+            CaptureStateRecursive(_rootHandlers);
+        }
+
+        private void CaptureStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
+        {
+            foreach (var handler in rootHandlers)
+            {
+                handler.CaptureState();
+
+                var children = handler.GetChildren();
+                CaptureStateRecursive(children);
+            }
+        }
+
+
+
+        internal static IEnumerable<EntityStateHandler> SortByDependencies(IEnumerable<EntityStateHandler> rootHandlers)
         {
             var result = new List<EntityStateHandler>();
             var visited = new HashSet<EntityStateHandler>();
@@ -116,39 +126,6 @@ namespace WhiteArrow.SnapboxSDK
                 Visit(init);
 
             return result;
-        }
-
-
-
-        public void CaptureState()
-        {
-            CaptureStateRecursive(_rootHandlers);
-        }
-
-        private void CaptureStateRecursive(IEnumerable<EntityStateHandler> rootHandlers)
-        {
-            foreach (var handler in rootHandlers)
-            {
-                handler.CaptureState();
-
-                var children = handler.GetChildren();
-                CaptureStateRecursive(children);
-            }
-        }
-
-
-
-        public void AddRootHandler(EntityStateHandler handler)
-        {
-            if (_rootHandlers.Contains(handler))
-                return;
-
-            _rootHandlers.Add(handler);
-        }
-
-        public void RemoveRootHandler(EntityStateHandler handler)
-        {
-            _rootHandlers.Remove(handler);
         }
     }
 }
