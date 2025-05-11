@@ -71,13 +71,20 @@ namespace WhiteArrow.SnapboxSDK
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus) SaveOnExit();
-            else _isOnExitSaved = false;
+            {
+                _isOnExitSaved = false;
+                _timeElapsed = 0;
+            }
         }
 
         private void OnApplicationFocus(bool focusStatus)
         {
             if (focusStatus) SaveOnExit();
-            else _isOnExitSaved = false;
+            else
+            {
+                _isOnExitSaved = false;
+                _timeElapsed = 0;
+            }
         }
 
         private void OnApplicationQuit() => SaveOnExit();
@@ -88,7 +95,7 @@ namespace WhiteArrow.SnapboxSDK
             {
                 _isOnExitSaved = true;
                 PreSave?.Invoke();
-                Task.Run(async () => await _snapbox.SaveAllSnapshotsAsync()).Wait();
+                _snapbox.SaveAllSnapshots();
             }
         }
     }
