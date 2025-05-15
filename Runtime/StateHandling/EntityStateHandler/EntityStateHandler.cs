@@ -155,7 +155,6 @@ namespace WhiteArrow.SnapboxSDK
 
 
     public class EntityStateHandler<T> : EntityStateHandler
-        where T : Component
     {
         private T _targetCached;
 
