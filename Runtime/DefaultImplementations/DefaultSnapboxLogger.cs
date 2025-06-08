@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
@@ -13,26 +14,8 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        private void Update()
-        {
-            lock (_logLock)
-            {
-                while (_logMessages.Count > 0)
-                {
-                    var message = _logMessages.Dequeue();
-                    Debug.Log(message);
-                }
-            }
-
-            lock (_errorLock)
-            {
-                while (_errorMessages.Count > 0)
-                {
-                    var message = _errorMessages.Dequeue();
-                    Debug.LogError(message);
-                }
-            }
-        }
+        private const string LOG_HEADER = "[Snapbox Logs]";
+        private const string ERROR_HEADER = "[Snapbox Errors]";
 
 
 
@@ -49,6 +32,52 @@ namespace WhiteArrow.SnapboxSDK
             lock (_errorLock)
             {
                 _errorMessages.Enqueue(message);
+            }
+        }
+
+
+
+        private void Update()
+        {
+            FlushLogs();
+            FlushErrors();
+        }
+
+        private void FlushLogs()
+        {
+            lock (_logLock)
+            {
+                if (_logMessages.Count == 0) return;
+
+                var sb = new StringBuilder();
+                sb.AppendLine(LOG_HEADER);
+
+                while (_logMessages.Count > 0)
+                {
+                    var message = _logMessages.Dequeue();
+                    sb.AppendLine($" • {message}");
+                }
+
+                Debug.Log(sb.ToString());
+            }
+        }
+
+        private void FlushErrors()
+        {
+            lock (_errorLock)
+            {
+                if (_errorMessages.Count == 0) return;
+
+                var sb = new StringBuilder();
+                sb.AppendLine(ERROR_HEADER);
+
+                while (_errorMessages.Count > 0)
+                {
+                    var message = _errorMessages.Dequeue();
+                    sb.AppendLine($" • {message}");
+                }
+
+                Debug.LogError(sb.ToString());
             }
         }
     }
