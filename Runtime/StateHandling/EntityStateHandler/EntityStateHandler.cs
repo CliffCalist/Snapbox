@@ -28,7 +28,11 @@ namespace WhiteArrow.SnapboxSDK
             {
                 if (_sceneContextCached == null)
                 {
+#if UNITY_6000_0_OR_NEWER
+                    var context = FindFirstObjectByType<SceneContext>();
+#else
                     var context = FindObjectOfType<SceneContext>();
+#endif
                     if (context == null)
                         throw new InvalidOperationException($"{nameof(SceneContext)} was not found in the scene.");
 
