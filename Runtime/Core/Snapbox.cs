@@ -10,20 +10,18 @@ namespace WhiteArrow.SnapboxSDK
         private readonly Dictionary<string, ISnapshotMetadata> _metadata = new();
         private readonly Dictionary<string, object> _snapshotsMap = new();
 
-        private readonly ISnapboxLogger _logger;
+        private readonly SnapboxLogger _logger;
         private readonly ISnapshotLoader _loader;
         private readonly ISnapshotSaver _saver;
 
 
 
-        public Snapbox(ISnapshotLoader loader, ISnapshotSaver saver, ISnapboxLogger logger = null)
+        public Snapbox(ISnapshotLoader loader, ISnapshotSaver saver)
         {
-            if (logger == null)
-                logger = new GameObject("[SNAPBOX LOGGER]").AddComponent<DefaultSnapboxLogger>();
+            _logger = new GameObject("[SNAPBOX LOGGER]").AddComponent<SnapboxLogger>();
 
             _loader = loader ?? throw new ArgumentNullException(nameof(loader));
             _saver = saver ?? throw new ArgumentNullException(nameof(saver));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -64,6 +62,8 @@ namespace WhiteArrow.SnapboxSDK
 
         public async Task LoadNewSnapshotsAsync()
         {
+            var logGroup = new SnapboxLogGroup("Loading new snapshots");
+
             foreach (var kvp in _metadata)
             {
                 if (!kvp.Value.IsDeleted && (!_snapshotsMap.ContainsKey(kvp.Key) || _snapshotsMap[kvp.Key] == null))
@@ -78,15 +78,19 @@ namespace WhiteArrow.SnapboxSDK
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError($"Error loading data for key '{kvp.Value.SnapshotName}': {ex.Message}");
+                        logGroup.AddError($"Error loading data for key '{kvp.Value.SnapshotName}': {ex.Message}");
                         _snapshotsMap[kvp.Key] = null;
                     }
                 }
             }
+
+            _logger.AddGroup(logGroup);
         }
 
         public async Task SaveAllSnapshotsAsync()
         {
+            var logGroup = new SnapboxLogGroup("Saving all snapshots");
+
             foreach (var kvp in _metadata)
             {
                 if (kvp.Value.IsChanged)
@@ -98,27 +102,31 @@ namespace WhiteArrow.SnapboxSDK
                         {
                             await _saver.DeleteAsync(kvp.Value);
                             kvp.Value.IsChanged = false;
-                            _logger.Log($"Snapshot for key '{kvp.Value.SnapshotName}' deleted successfully.");
+                            logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' deleted successfully.");
                         }
                         else if (snapshot != null)
                         {
                             await _saver.SaveAsync(kvp.Value, snapshot);
                             kvp.Value.IsChanged = false;
-                            _logger.Log($"Snapshot for key '{kvp.Value.SnapshotName}' saved successfully.");
+                            logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' saved successfully.");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError($"Error saving Snapshot for key '{kvp.Value.SnapshotName}': {ex.Message}");
+                        logGroup.AddError($"Error saving Snapshot for key '{kvp.Value.SnapshotName}': {ex.Message}");
                     }
                 }
             }
+
+            _logger.AddGroup(logGroup);
         }
 
 
 
         public void SaveAllSnapshots()
         {
+            var logGroup = new SnapboxLogGroup("Saving all snapshots");
+
             foreach (var kvp in _metadata)
             {
                 if (kvp.Value.IsChanged)
@@ -130,21 +138,23 @@ namespace WhiteArrow.SnapboxSDK
                         {
                             _saver.Delete(kvp.Value);
                             kvp.Value.IsChanged = false;
-                            _logger.Log($"Snapshot for key '{kvp.Value.SnapshotName}' deleted successfully.");
+                            logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' deleted successfully.");
                         }
                         else if (snapshot != null)
                         {
                             _saver.Save(kvp.Value, snapshot);
                             kvp.Value.IsChanged = false;
-                            _logger.Log($"Snapshot for key '{kvp.Value.SnapshotName}' saved successfully.");
+                            logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' saved successfully.");
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError($"Error saving Snapshot for key '{kvp.Value.SnapshotName}': {ex.Message}");
+                        logGroup.AddError($"Error saving Snapshot for key '{kvp.Value.SnapshotName}': {ex.Message}");
                     }
                 }
             }
+
+            _logger.AddGroup(logGroup);
         }
 
 
