@@ -75,6 +75,8 @@ namespace WhiteArrow.SnapboxSDK
                         if (!_snapshotsMap.ContainsKey(kvp.Key))
                             _snapshotsMap.Add(kvp.Key, data);
                         else _snapshotsMap[kvp.Key] = data;
+
+                        logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' loaded successfully.");
                     }
                     catch (Exception ex)
                     {
