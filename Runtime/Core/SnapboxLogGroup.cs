@@ -57,7 +57,7 @@ namespace WhiteArrow.SnapboxSDK
         public override string ToString()
         {
             var message = string.Format(HEADER_FORMAT, _header) + "\n";
-            message = BuildGroupMessage(_header, _logs);
+            message += BuildGroupMessage(_header, _logs);
             return message;
         }
     }
