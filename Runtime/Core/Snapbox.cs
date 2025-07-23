@@ -63,29 +63,51 @@ namespace WhiteArrow.SnapboxSDK
         public async Task LoadNewSnapshotsAsync()
         {
             var logGroup = new SnapboxLogGroup("Loading new snapshots");
+            var tasks = new List<Task>();
 
             foreach (var kvp in _metadata)
             {
                 if (!kvp.Value.IsDeleted && (!_snapshotsMap.ContainsKey(kvp.Key) || _snapshotsMap[kvp.Key] == null))
                 {
-                    try
-                    {
-                        var data = await _loader.LoadAsync(kvp.Value);
+                    var key = kvp.Key;
+                    var metadata = kvp.Value;
 
-                        if (!_snapshotsMap.ContainsKey(kvp.Key))
-                            _snapshotsMap.Add(kvp.Key, data);
-                        else _snapshotsMap[kvp.Key] = data;
-
-                        logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' loaded successfully.");
-                    }
-                    catch (Exception ex)
+                    tasks.Add(Task.Run(async () =>
                     {
-                        logGroup.AddError($"Error loading data for key '{kvp.Value.SnapshotName}': {ex.Message}");
-                        _snapshotsMap[kvp.Key] = null;
-                    }
+                        try
+                        {
+                            var data = await _loader.LoadAsync(metadata);
+
+                            lock (_snapshotsMap)
+                            {
+                                if (!_snapshotsMap.ContainsKey(key))
+                                    _snapshotsMap.Add(key, data);
+                                else
+                                    _snapshotsMap[key] = data;
+                            }
+
+                            lock (logGroup)
+                            {
+                                logGroup.AddLog($"Snapshot for key '{metadata.SnapshotName}' loaded successfully.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            lock (_snapshotsMap)
+                            {
+                                _snapshotsMap[key] = null;
+                            }
+
+                            lock (logGroup)
+                            {
+                                logGroup.AddError($"Error loading data for key '{metadata.SnapshotName}': {ex.Message}");
+                            }
+                        }
+                    }));
                 }
             }
 
+            await Task.WhenAll(tasks);
             _logger.AddGroup(logGroup);
         }
 
