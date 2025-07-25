@@ -7,9 +7,9 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class EntityStateHandler : MonoBehaviour
     {
-        [SerializeField] private bool _isRegistered;
-        [SerializeField] private bool _isRestored;
-        [SerializeField] private bool _isInitialized;
+        [SerializeField, ReadOnly] private bool _isRegistered;
+        [SerializeField, ReadOnly] private bool _isRestored;
+        [SerializeField, ReadOnly] private bool _isInitialized;
         [SerializeField] private List<EntityStateHandler> _dependencies;
         [SerializeField] private List<EntityStateHandler> _children;
 

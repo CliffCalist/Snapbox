@@ -5,7 +5,7 @@ namespace WhiteArrow.SnapboxSDK
 {
     public class SceneContext : MonoBehaviour
     {
-        [SerializeField] private StateRestoringPhase _restoringPhase;
+        [SerializeField, ReadOnly] private StateRestoringPhase _restoringPhase;
 
 
 
