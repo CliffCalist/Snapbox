@@ -100,6 +100,7 @@ namespace WhiteArrow.SnapboxSDK
             var visited = new HashSet<EntityStateHandler>();
             var visiting = new HashSet<EntityStateHandler>();
 
+
             void Visit(EntityStateHandler node)
             {
                 if (visited.Contains(node))
@@ -121,6 +122,22 @@ namespace WhiteArrow.SnapboxSDK
                 visited.Add(node);
                 result.Add(node);
             }
+
+
+            if (rootHandlers.Any(h => h == null))
+            {
+                var names = rootHandlers
+                    .Select(
+                        (h, index) => h != null
+                        ? $"{index + 1}. {h.name}"
+                        : $"{index + 1}. null"
+                    );
+
+                var namesMessage = string.Join("\n", names);
+                Debug.LogWarning($"[Snapbox] One or more null handlers detected in rootHandlers list. Full list:\n: {namesMessage}");
+            }
+
+            rootHandlers = rootHandlers.Where(h => h != null);
 
             foreach (var init in rootHandlers)
                 Visit(init);
