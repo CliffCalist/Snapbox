@@ -77,7 +77,17 @@ namespace WhiteArrow.SnapboxSDK
         {
             return _dependencies
                 .Concat(GetDependenciesFromDecorator())
-                .Concat(GetAdditionalDependencies());
+                .Concat(GetAdditionalDependencies())
+                .Where(d =>
+                {
+                    if (d == null)
+                    {
+                        Debug.LogWarning($"[{name}] Null dependency found and skipped.");
+                        return false;
+                    }
+
+                    return true;
+                });
         }
 
         private IEnumerable<EntityStateHandler> GetDependenciesFromDecorator()

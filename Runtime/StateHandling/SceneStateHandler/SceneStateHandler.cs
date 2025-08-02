@@ -114,15 +114,7 @@ namespace WhiteArrow.SnapboxSDK
                 if (deps != null)
                 {
                     foreach (var dep in deps)
-                    {
-                        if (dep == null)
-                        {
-                            Debug.LogWarning($"[Snapbox] Dependency is null in handler '{node.name}'. It will be ignored.");
-                            continue;
-                        }
-
                         Visit(dep);
-                    }
                 }
 
                 visiting.Remove(node);
