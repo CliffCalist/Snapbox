@@ -51,7 +51,7 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public event Action<EntityStateHandler> NewChildernAdded;
+        public event Action<EntityStateHandler> NewChildrenAdded;
 
 
 
@@ -115,7 +115,7 @@ namespace WhiteArrow.Snapbox
         protected void OnNewChildrenCreated()
         {
             if (_sceneContext.RestoringPhase == StateRestoringPhase.Running)
-                NewChildernAdded?.Invoke(this);
+                NewChildrenAdded?.Invoke(this);
         }
 
 

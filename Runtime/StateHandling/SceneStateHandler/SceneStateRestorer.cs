@@ -29,7 +29,7 @@ namespace WhiteArrow.Snapbox
             yield return new WaitWhile(() => runner._pendingChildCoroutines > 0);
 
             foreach (var handler in rootHandlers)
-                runner.UnsubscribeFromNewChildrensAdded(handler);
+                runner.UnsubscribeFromNewChildrenAdded(handler);
 
             onComplete?.Invoke();
         }
@@ -53,7 +53,7 @@ namespace WhiteArrow.Snapbox
 
             foreach (var handler in handlers)
             {
-                SubscribeToNewChildrensAdded(handler);
+                SubscribeToNewChildrenAdded(handler);
 
                 var children = handler.GetChildren();
                 children = SceneStateHandler.SortByDependencies(children);
@@ -63,18 +63,18 @@ namespace WhiteArrow.Snapbox
 
 
 
-        private void SubscribeToNewChildrensAdded(EntityStateHandler handler)
+        private void SubscribeToNewChildrenAdded(EntityStateHandler handler)
         {
             if (_subscribedHandlers.Contains(handler))
                 return;
 
-            handler.NewChildernAdded += OnNewChildrenAdded;
+            handler.NewChildrenAdded += OnNewChildrenAdded;
             _subscribedHandlers.Add(handler);
         }
 
-        private void UnsubscribeFromNewChildrensAdded(EntityStateHandler handler)
+        private void UnsubscribeFromNewChildrenAdded(EntityStateHandler handler)
         {
-            handler.NewChildernAdded -= OnNewChildrenAdded;
+            handler.NewChildrenAdded -= OnNewChildrenAdded;
             _subscribedHandlers.Remove(handler);
         }
 

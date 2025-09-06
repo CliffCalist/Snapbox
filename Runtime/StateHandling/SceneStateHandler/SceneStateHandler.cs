@@ -33,10 +33,10 @@ namespace WhiteArrow.Snapbox
                 throw new ArgumentNullException(nameof(database));
 
             if (_context == null)
-                throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be runned.");
+                throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be run.");
 
             if (_context.RestoringPhase != StateRestoringPhase.None)
-                throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be runned twice.");
+                throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be run twice.");
 
 
             _context.SetDatabase(database);
