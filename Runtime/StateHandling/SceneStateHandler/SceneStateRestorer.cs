@@ -41,8 +41,12 @@ namespace WhiteArrow.Snapbox
                 if (!handler.IsRegistered)
                 {
                     var descriptor = handler.GetDescriptor();
-                    var metadata = _context.MetadataConvertor.Convert(descriptor);
-                    _context.Database.AddMetadata(metadata);
+                    if (descriptor != null)
+                    {
+                        var metadata = _context.MetadataConvertor.Convert(descriptor);
+                        _context.Database.AddMetadata(metadata);
+                    }
+
                     handler.MarkAsRegistered();
                 }
             }
