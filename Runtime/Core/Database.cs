@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
 {
-    public class Snapbox
+    public class Database
     {
         private readonly Dictionary<string, ISnapshotMetadata> _metadata = new();
         private readonly Dictionary<string, object> _snapshotsMap = new();
@@ -16,7 +16,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public Snapbox(ISnapshotLoader loader, ISnapshotSaver saver)
+        public Database(ISnapshotLoader loader, ISnapshotSaver saver)
         {
             _logger = new GameObject("[SNAPBOX LOGGER]").AddComponent<SnapboxLogger>();
 

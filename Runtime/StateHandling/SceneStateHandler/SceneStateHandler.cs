@@ -27,7 +27,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public void RestoreState(Snapbox database, Action onComplete = null)
+        public void RestoreState(Database database, Action onComplete = null)
         {
             if (database is null)
                 throw new ArgumentNullException(nameof(database));

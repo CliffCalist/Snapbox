@@ -9,12 +9,12 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public Snapbox Database { get; private set; }
+        public Database Database { get; private set; }
         public StateRestoringPhase RestoringPhase => _restoringPhase;
 
 
 
-        internal void SetDatabase(Snapbox database)
+        internal void SetDatabase(Database database)
         {
             if (Database != null)
                 throw new InvalidOperationException($"{nameof(SetDatabase)} can be called only once.");

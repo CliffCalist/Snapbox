@@ -28,7 +28,7 @@ namespace WhiteArrow.SnapboxSDK.Tests
                     return new object();
                 });
 
-            var snapbox = new Snapbox(mockLoader.Object, mockSaver.Object);
+            var snapbox = new Database(mockLoader.Object, mockSaver.Object);
 
             for (int i = 0; i < COUNT; i++)
             {

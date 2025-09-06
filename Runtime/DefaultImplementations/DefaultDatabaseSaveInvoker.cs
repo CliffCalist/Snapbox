@@ -1,10 +1,9 @@
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace WhiteArrow.SnapboxSDK
 {
-    public class DefaultSnapboxSaveInvoker : MonoBehaviour
+    public class DefaultDatabaseSaveInvoker : MonoBehaviour
     {
         [SerializeField] private bool _useOnQuitSaving = false;
         [SerializeField, Min(0)] private float _timeOffset = 1;
@@ -27,7 +26,7 @@ namespace WhiteArrow.SnapboxSDK
 
 
         private bool _isInitialized;
-        private Snapbox _snapbox;
+        private Database _database;
         private float _timeElapsed;
         private bool _isOnExitSaved;
 
@@ -37,9 +36,9 @@ namespace WhiteArrow.SnapboxSDK
 
 
 
-        public void Init(Snapbox snapbox)
+        public void Init(Database database)
         {
-            _snapbox = snapbox ?? throw new ArgumentNullException(nameof(snapbox));
+            _database = database ?? throw new ArgumentNullException(nameof(database));
             _timeElapsed = -_timeOffset;
             _isInitialized = true;
         }
@@ -48,7 +47,7 @@ namespace WhiteArrow.SnapboxSDK
 
         private void Update()
         {
-            if (!_isInitialized || _snapbox == null) return;
+            if (!_isInitialized || _database == null) return;
 
             _timeElapsed += Time.unscaledDeltaTime;
             if (_timeElapsed >= _timeRate)
@@ -61,7 +60,7 @@ namespace WhiteArrow.SnapboxSDK
         private void InvokeSave()
         {
             PreSave?.Invoke();
-            _ = _snapbox.SaveAllSnapshotsAsync();
+            _ = _database.SaveAllSnapshotsAsync();
         }
 
 
@@ -91,11 +90,11 @@ namespace WhiteArrow.SnapboxSDK
 
         private void SaveOnExit()
         {
-            if (_useOnQuitSaving && _snapbox != null && !_isOnExitSaved)
+            if (_useOnQuitSaving && _database != null && !_isOnExitSaved)
             {
                 _isOnExitSaved = true;
                 PreSave?.Invoke();
-                _snapbox.SaveAllSnapshots();
+                _database.SaveAllSnapshots();
             }
         }
     }
