@@ -102,6 +102,34 @@ namespace WhiteArrow.Snapbox
 
 
 
+        public IEnumerable<SnapshotMetadataDescriptor> CollectAllDescriptors()
+        {
+            if (_context == null)
+                throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be run.");
+
+            if (_context.RestoringPhase != StateRestoringPhase.Finished)
+                throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be run before {nameof(RestoreState)} method.");
+
+            return CollectDescriptorsRecursive(_rootHandlers);
+        }
+
+        private IEnumerable<SnapshotMetadataDescriptor> CollectDescriptorsRecursive(IEnumerable<EntityStateHandler> rootHandlers)
+        {
+            var descriptors = new List<SnapshotMetadataDescriptor>();
+
+            foreach (var handler in rootHandlers)
+            {
+                descriptors.Add(handler.GetDescriptor());
+
+                var children = handler.GetChildren();
+                descriptors.AddRange(CollectDescriptorsRecursive(children));
+            }
+
+            return descriptors;
+        }
+
+
+
         internal static IEnumerable<EntityStateHandler> SortByDependencies(IEnumerable<EntityStateHandler> rootHandlers)
         {
             var result = new List<EntityStateHandler>();
