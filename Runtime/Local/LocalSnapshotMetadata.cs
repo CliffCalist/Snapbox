@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     public class LocalSnapshotMetadata : ISnapshotMetadata
     {

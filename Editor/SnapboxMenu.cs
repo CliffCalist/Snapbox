@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
-using WhiteArrow.SnapboxSDK;
+using WhiteArrow.Snapbox;
 
 namespace WhiteArrowEditor.SnapboxSDK
 {

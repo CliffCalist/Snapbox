@@ -1,4 +1,4 @@
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     public enum StateRestoringPhase
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     public class DependencyDecorator : MonoBehaviour
     {

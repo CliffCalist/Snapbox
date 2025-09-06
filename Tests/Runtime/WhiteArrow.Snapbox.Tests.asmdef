@@ -1,11 +1,11 @@
 {
-    "name": "WhiteArrow.SnapboxSDK.Tests",
-    "rootNamespace": "WhiteArrow.SnapboxSDK.Tests",
+    "name": "WhiteArrow.Snapbox.Tests",
+    "rootNamespace": "WhiteArrow.Snapbox.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.PerformanceTesting",
-        "WhiteArrow.SnapboxSDK"
+        "WhiteArrow.Snapbox"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

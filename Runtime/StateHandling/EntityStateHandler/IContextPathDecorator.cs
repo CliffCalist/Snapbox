@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     public interface IContextPathDecorator
     {

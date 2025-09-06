@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using WhiteArrow.SnapboxSDK;
+using WhiteArrow.Snapbox;
 
 namespace WhiteArrowEditor.SnapboxSDK
 {

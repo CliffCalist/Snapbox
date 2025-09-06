@@ -1,6 +1,6 @@
 using System;
 
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     [Serializable]
     public class LocalDataContainer<T>

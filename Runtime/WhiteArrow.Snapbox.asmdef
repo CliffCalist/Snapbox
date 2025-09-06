@@ -1,6 +1,6 @@
 {
-    "name": "WhiteArrow.SnapboxSDK",
-    "rootNamespace": "WhiteArrow.SnapboxSDK",
+    "name": "WhiteArrow.Snapbox",
+    "rootNamespace": "WhiteArrow.Snapbox",
     "references": [
         "GUID:e3a1b3532d5ca4d54be21cb53828b508"
     ],

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Unity.PerformanceTesting;
 using UnityEngine;
 
-namespace WhiteArrow.SnapboxSDK.Tests
+namespace WhiteArrow.Snapbox.Tests
 {
     public class SnapboxTests
     {

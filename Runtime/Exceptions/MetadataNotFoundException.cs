@@ -1,6 +1,6 @@
 using System;
 
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     public class MetadataNotFoundException : Exception
     {

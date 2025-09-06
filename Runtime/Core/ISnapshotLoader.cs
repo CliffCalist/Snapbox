@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace WhiteArrow.SnapboxSDK
+namespace WhiteArrow.Snapbox
 {
     public interface ISnapshotLoader
     {
