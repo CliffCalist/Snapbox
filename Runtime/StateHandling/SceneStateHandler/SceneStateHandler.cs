@@ -27,37 +27,41 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public void RestoreState(Database database, ISnapshotMetadataConverter metadataConverter, Action onComplete = null)
+        public void InitContext(Database database, ISnapshotMetadataConverter metadataConverter)
         {
-            if (database is null)
-                throw new ArgumentNullException(nameof(database));
+            if (_context == null)
+                throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be run.");
 
-            if (metadataConverter is null)
-                throw new ArgumentNullException(nameof(metadataConverter));
+            _context.Init(database, metadataConverter);
+        }
 
+        public void RestoreState(Action onComplete = null)
+        {
             if (_context == null)
                 throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be run.");
 
             if (_context.RestoringPhase != StateRestoringPhase.None)
                 throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be run twice.");
 
-
-            _context.SetDatabase(database);
-            _context.SetMetadataConverter(metadataConverter);
             _context.MarkRestoringRunningPhase();
-
             StartCoroutine(SceneRestorationRunner.Run(_context, _rootHandlers, () =>
             {
                 _context.MarkRestoringFinishedPhase();
-
-                var root = SortByDependencies(_rootHandlers);
-                InitializeEntityRecursive(root);
-
                 onComplete?.Invoke();
             }));
         }
 
+        public void InitScene()
+        {
+            if (_context == null)
+                throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be run.");
 
+            if (_context.RestoringPhase != StateRestoringPhase.Finished)
+                throw new InvalidOperationException($"{nameof(SceneStateHandler)} can't be run before {nameof(RestoreState)} method.");
+
+            var root = SortByDependencies(_rootHandlers);
+            InitializeEntityRecursive(root);
+        }
 
         private void InitializeEntityRecursive(IEnumerable<EntityStateHandler> rootHandlers)
         {

@@ -8,6 +8,7 @@ namespace WhiteArrow.Snapbox
         [SerializeField, ReadOnly] private StateRestoringPhase _restoringPhase;
 
 
+        public bool IsInited => MetadataConvertor != null && Database != null;
 
         public ISnapshotMetadataConverter MetadataConvertor { get; private set; }
         public Database Database { get; private set; }
@@ -15,20 +16,13 @@ namespace WhiteArrow.Snapbox
 
 
 
-        internal void SetDatabase(Database database)
+        internal void Init(Database database, ISnapshotMetadataConverter metadataConverter)
         {
-            if (Database != null)
-                throw new InvalidOperationException($"{nameof(SetDatabase)} can be called only once.");
+            if (IsInited)
+                throw new InvalidOperationException($"{nameof(SceneContext)} is already inited.");
 
             Database = database ?? throw new ArgumentNullException(nameof(database));
-        }
-
-        internal void SetMetadataConverter(ISnapshotMetadataConverter factory)
-        {
-            if (MetadataConvertor != null)
-                throw new InvalidOperationException($"{nameof(SetMetadataConverter)} can be called only once.");
-
-            MetadataConvertor = factory ?? throw new ArgumentNullException(nameof(factory));
+            MetadataConvertor = metadataConverter ?? throw new ArgumentNullException(nameof(metadataConverter));
         }
 
 
