@@ -27,10 +27,13 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public void RestoreState(Database database, Action onComplete = null)
+        public void RestoreState(Database database, ISnapshotMetadataConverter metadataConverter, Action onComplete = null)
         {
             if (database is null)
                 throw new ArgumentNullException(nameof(database));
+
+            if (metadataConverter is null)
+                throw new ArgumentNullException(nameof(metadataConverter));
 
             if (_context == null)
                 throw new NullReferenceException($"{nameof(SceneContext)} is not set. The {nameof(SceneStateHandler)} can't be run.");
@@ -40,6 +43,7 @@ namespace WhiteArrow.Snapbox
 
 
             _context.SetDatabase(database);
+            _context.SetMetadataConverter(metadataConverter);
             _context.MarkRestoringRunningPhase();
 
             StartCoroutine(SceneRestorationRunner.Run(_context, _rootHandlers, () =>

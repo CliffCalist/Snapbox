@@ -9,6 +9,7 @@ namespace WhiteArrow.Snapbox
 
 
 
+        public ISnapshotMetadataConverter MetadataConvertor { get; private set; }
         public Database Database { get; private set; }
         public StateRestoringPhase RestoringPhase => _restoringPhase;
 
@@ -20,6 +21,14 @@ namespace WhiteArrow.Snapbox
                 throw new InvalidOperationException($"{nameof(SetDatabase)} can be called only once.");
 
             Database = database ?? throw new ArgumentNullException(nameof(database));
+        }
+
+        internal void SetMetadataConverter(ISnapshotMetadataConverter factory)
+        {
+            if (MetadataConvertor != null)
+                throw new InvalidOperationException($"{nameof(SetMetadataConverter)} can be called only once.");
+
+            MetadataConvertor = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
 

@@ -39,7 +39,12 @@ namespace WhiteArrow.Snapbox
             foreach (var handler in handlers)
             {
                 if (!handler.IsRegistered)
-                    handler.RegisterSnapshotMetadata();
+                {
+                    var descriptor = handler.GetDescriptor();
+                    var metadata = _context.MetadataConvertor.Convert(descriptor);
+                    _context.Database.AddMetadata(metadata);
+                    handler.MarkAsRegistered();
+                }
             }
 
             var task = Task.Run(async () => await _context.Database.LoadNewSnapshotsAsync());

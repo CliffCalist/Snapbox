@@ -16,7 +16,7 @@ namespace WhiteArrow.Snapbox
         public static string SavingsFolderPath => Path.Combine(Application.persistentDataPath, "Snapbox");
 
 
-        public LocalSnapshotMetadata(string snapshotName, Type snapshotType, string folderPath = null)
+        public LocalSnapshotMetadata(string snapshotName, string folderPath, Type snapshotType)
         {
             if (string.IsNullOrWhiteSpace(snapshotName))
                 throw new ArgumentException(nameof(snapshotName));

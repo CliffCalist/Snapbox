@@ -65,7 +65,13 @@ namespace WhiteArrow.Snapbox
 
             if (_sceneContext.RestoringPhase == StateRestoringPhase.Finished)
             {
-                RegisterSnapshotMetadata();
+                var descriptor = GetDescriptor();
+                if (descriptor != null)
+                {
+                    var metadata = _sceneContext.MetadataConvertor.Convert(descriptor);
+                    _sceneContext.Database.AddMetadata(metadata);
+                }
+
                 RestoreState();
                 Initialize();
             }
@@ -133,13 +139,21 @@ namespace WhiteArrow.Snapbox
 
 
 
-        internal void RegisterSnapshotMetadata()
+        internal SnapshotMetadataDescriptor GetDescriptor()
         {
-            RegisterSnapshotMetadataCore();
-            _isRegistered = true;
+            var descriptor = GetDescriptorCore();
+            return descriptor;
         }
 
-        protected virtual void RegisterSnapshotMetadataCore() { }
+        protected virtual SnapshotMetadataDescriptor GetDescriptorCore()
+        {
+            return null;
+        }
+
+        internal void MarkAsRegistered()
+        {
+            _isRegistered = true;
+        }
 
 
 
