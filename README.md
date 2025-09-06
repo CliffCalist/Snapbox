@@ -6,14 +6,18 @@
 
 # Features
 
-- Metadata-driven architecture  
-- Custom saver/loader/metadata support  
-- Async/sync persistence  
-- Built-in local JSON storage  
-- Scene & entity state handlers  
-- Post-restore logic guarantee  
-- Hierarchical restoration graph  
-- Dependency-aware execution
+**Database**
+- Metadata-driven architecture
+- Custom saver/loader/metadata support
+- Database migration support
+- Async/sync persistence
+- Built-in local JSON storage
+
+**Game State Handling**
+- Scene & entity state handling
+- Post-restore initialization guarantee
+- Hierarchical restoration graph of state handlers
+- Dependency-aware execution of state handlers
 
 # Installing
 
