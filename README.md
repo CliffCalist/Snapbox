@@ -17,10 +17,11 @@
 
 # Installing
 
-Add Snapbox to your Unity project via UPM by modifying your `manifest.json`:
+To install via UPM, use "Install package from git URL" and add the following:
 
-```json
-"com.white-arrow.snapbox": "https://github.com/CliffCalist/Snapbox.git"
+```
+1. https://github.com/CliffCalist/Unity-Tools.git
+2. https://github.com/CliffCalist/Snapbox.git
 ```
 
 # Usage
