@@ -107,6 +107,38 @@ Delete a snapshot:
 database.SetSnapshot("player_inventory", null);
 ```
 
+## Migrating Snapshots Between Databases
+
+Snapbox supports migrating data from one storage backend to another using the `SnapshotMigrator` utility.  
+This is useful when transitioning from local storage to a cloud-based backend (e.g., Firebase).
+
+### How It Works
+
+The migration process consists of the following steps:
+
+1. A `DatabaseMigrator` is created using the source loader (from where data will be read) and the target saver (where data will be written).
+2. You register migration entries — each entry links source metadata with its corresponding target metadata.
+3. You run the migration by calling `MigrateAsync()`. This loads each snapshot from the source and writes it to the target.
+4. After migration completes, you can check the result to verify success and log errors if needed.
+
+### Example
+
+```csharp
+var migrator = new DatabaseMigrator(localLoader, firebaseSaver);
+
+var migrationEntry = new SnapshotMigrationEntry(
+    new LocalSnapshotMetadata("inventory", typeof(InventoryData)),
+    new FirebaseSnapshotMetadata("inventory", typeof(InventoryData))
+);
+
+migrator.AddMigrationPair(migrationEntry);
+var success = await migrator.MigrateAsync();
+
+if (!success)
+    Debug.LogError("Migration failed. Check logs for details.");
+```
+
+
 # Custom Snapbox Backends
 
 You can integrate Snapbox with any storage backend by implementing:
@@ -441,7 +473,7 @@ These helpers are **optional**, but greatly enhance maintainability and clarity 
 # Roadmap
 
 - [x] Parallel async DB operations
-- [ ] Database migration support
+- [x] Database migration support
 - [ ] Safer handling of DB types with single-mode (sync-only or async-only) access
 - [ ] Snapshot buffer system for async DBs  
 - [ ] Versioning and migration support  
