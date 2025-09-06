@@ -29,7 +29,7 @@ To install via UPM, use "Install package from git URL" and add the following:
 ## Initializing Snapbox
 
 ```csharp
-var snapbox = new Snapbox(loader, saver);
+var database = new Database(loader, saver);
 ```
 
 - `loader`: implementation of `ISnapshotLoader`
@@ -50,13 +50,13 @@ Metadata must be registered with Snapbox before loading or saving snapshots.
 Register metadata:
 
 ```csharp
-snapbox.AddMetadata(new MySnapshotMetadata("player_inventory"));
+database.AddMetadata(new MySnapshotMetadata("player_inventory"));
 ```
 
 Register multiple:
 
 ```csharp
-snapbox.AddMetadata(new List<ISnapshotMetadata>
+database.AddMetadata(new List<ISnapshotMetadata>
 {
     new MySnapshotMetadata("inventory"),
     new MySnapshotMetadata("settings")
@@ -66,8 +66,8 @@ snapbox.AddMetadata(new List<ISnapshotMetadata>
 Remove metadata:
 
 ```csharp
-snapbox.RemoveMetadata("player_inventory");
-snapbox.RemoveMetadata(new List<string> { "settings", "inventory" });
+database.RemoveMetadata("player_inventory");
+database.RemoveMetadata(new List<string> { "settings", "inventory" });
 ```
 
 ## Saving Snapshots
@@ -75,13 +75,13 @@ snapbox.RemoveMetadata(new List<string> { "settings", "inventory" });
 Save all changed snapshots asynchronously:
 
 ```csharp
-await snapbox.SaveAllSnapshotsAsync();
+await database.SaveAllSnapshotsAsync();
 ```
 
 Or synchronously:
 
 ```csharp
-snapbox.SaveAllSnapshots();
+database.SaveAllSnapshots();
 ```
 
 - Snapshots are only saved if `IsChanged` is `true`
@@ -92,19 +92,19 @@ snapbox.SaveAllSnapshots();
 Read a snapshot:
 
 ```csharp
-var inventory = snapbox.GetSnapshot<Inventory>("player_inventory");
+var inventory = database.GetSnapshot<Inventory>("player_inventory");
 ```
 
 Update a snapshot:
 
 ```csharp
-snapbox.SetSnapshot("player_inventory", inventory);
+database.SetSnapshot("player_inventory", inventory);
 ```
 
 Delete a snapshot:
 
 ```csharp
-snapbox.SetSnapshot("player_inventory", null);
+database.SetSnapshot("player_inventory", null);
 ```
 
 # Custom Snapbox Backends
@@ -224,8 +224,6 @@ public class FileSnapshotLoader : ISnapshotLoader
 
 ---
 
----
-
 # Scene and Entity State Handlers
 
 Snapbox provides a powerful mechanism for **restoring and managing game state hierarchically**, using two core classes:
@@ -240,7 +238,7 @@ These handlers enable you to decouple snapshot logic from the game logic, provid
 To coordinate everything, each scene must contain a `SceneContext`. This component is simple and needs no configuration. It:
 
 1. Tracks the current scene restoration phase (`StateRestoringPhase`).
-2. Holds a reference to the active `Snapbox` database once `SceneStateHandler.RestoreState()` is called.
+2. Holds a reference to the active `Database` database once `SceneStateHandler.RestoreState()` is called.
 
 ## EntityStateHandler
 
@@ -346,12 +344,12 @@ public void CaptureState();
 
 private void Start()
 {
-    var snapbox = new Snapbox(
+    var database = new Snapbox(
         new LocalSnapshotLoader(),
         new LocalSnapshotSaver()
     );
 
-    _sceneStateHandler.RestoreState(snapbox, () =>
+    _sceneStateHandler.RestoreState(database, () =>
     {
         Debug.Log("Scene state restored and initialized.");
     });
@@ -442,10 +440,11 @@ These helpers are **optional**, but greatly enhance maintainability and clarity 
 
 # Roadmap
 
+- [x] Parallel async DB operations
+- [ ] Database migration support
 - [ ] Safer handling of DB types with single-mode (sync-only or async-only) access
 - [ ] Snapshot buffer system for async DBs  
 - [ ] Versioning and migration support  
-- [ ] Parallel async DB operations
 - [ ] Editor visualization of scene graph & dependency tree
 - [ ] (Needs validation) Decouple `EntityStateHandler` from fixed metadata implementation  
 - [ ] (Needs validation) Extract state handler algorithm into standalone framework  
