@@ -42,43 +42,46 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public async Task<bool> MigrateAsync()
+        public async Task<MigrationResult> MigrateAsync()
         {
-            var group = new SnapboxLogGroup("Database migration");
+            MigrationResult result = null;
+            var debugGroup = new SnapboxLogGroup("Database migration");
 
-            var loadSuccess = await LoadFromSourceAsync(group);
-            var saveSuccess = await SaveToTargetAsync(group);
+            result = await LoadFromSourceAsync(debugGroup);
 
-            _logger.AddGroup(group);
-            return loadSuccess && saveSuccess;
+            if (result.Status == MigrationStatus.Success)
+                result = await SaveToTargetAsync(debugGroup);
+
+            _logger.AddGroup(debugGroup);
+            return result;
         }
 
-        private async Task<bool> LoadFromSourceAsync(SnapboxLogGroup group)
+        private async Task<MigrationResult> LoadFromSourceAsync(SnapboxLogGroup group)
         {
-            var hasErrors = false;
-
             foreach (var entry in _entries)
             {
                 try
                 {
                     var data = await _sourceLoader.LoadAsync(entry.SourceMetadata);
+
+                    if (data == null)
+                        return MigrationResult.MissingData(entry.SourceMetadata.SnapshotName);
+
                     entry.Data = data;
                     group.AddLog($"Loaded snapshot '{entry.SourceMetadata.SnapshotName}' from source.");
                 }
                 catch (Exception ex)
                 {
                     group.AddError($"Failed to load snapshot '{entry.SourceMetadata.SnapshotName}': {ex.Message}");
-                    hasErrors = true;
+                    return MigrationResult.Error(ex);
                 }
             }
 
-            return !hasErrors;
+            return MigrationResult.Success();
         }
 
-        private async Task<bool> SaveToTargetAsync(SnapboxLogGroup group)
+        private async Task<MigrationResult> SaveToTargetAsync(SnapboxLogGroup group)
         {
-            var hasErrors = false;
-
             foreach (var entry in _entries)
             {
                 try
@@ -88,20 +91,16 @@ namespace WhiteArrow.Snapbox
                         await _targetSaver.SaveAsync(entry.TargetMetadata, entry.Data);
                         group.AddLog($"Saved snapshot '{entry.TargetMetadata.SnapshotName}' to target.");
                     }
-                    else
-                    {
-                        group.AddError($"No data to save for snapshot '{entry.TargetMetadata.SnapshotName}'.");
-                        hasErrors = true;
-                    }
+                    else throw new Exception($"No data to save for snapshot '{entry.TargetMetadata.SnapshotName}'.");
                 }
                 catch (Exception ex)
                 {
                     group.AddError($"Failed to save snapshot '{entry.TargetMetadata.SnapshotName}': {ex.Message}");
-                    hasErrors = true;
+                    return MigrationResult.Error(ex);
                 }
             }
 
-            return !hasErrors;
+            return MigrationResult.Success();
         }
 
 
