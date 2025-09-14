@@ -82,6 +82,8 @@ namespace WhiteArrow.Snapbox
 
         private async Task<MigrationResult> SaveToTargetAsync(SnapboxLogGroup group)
         {
+            var savedEntries = new List<SnapshotMigrationEntry>();
+
             foreach (var entry in _entries)
             {
                 try
@@ -89,18 +91,30 @@ namespace WhiteArrow.Snapbox
                     if (entry.Data != null)
                     {
                         await _targetSaver.SaveAsync(entry.TargetMetadata, entry.Data);
+                        savedEntries.Add(entry);
                         group.AddLog($"Saved snapshot '{entry.TargetMetadata.SnapshotName}' to target.");
                     }
                     else throw new Exception($"No data to save for snapshot '{entry.TargetMetadata.SnapshotName}'.");
                 }
                 catch (Exception ex)
                 {
+                    await RollbackTargetAsync(savedEntries, group);
+
                     group.AddError($"Failed to save snapshot '{entry.TargetMetadata.SnapshotName}': {ex.Message}");
                     return MigrationResult.Error(ex);
                 }
             }
 
             return MigrationResult.Success();
+        }
+
+        private async Task RollbackTargetAsync(IEnumerable<SnapshotMigrationEntry> entries, SnapboxLogGroup group)
+        {
+            foreach (var entry in entries)
+            {
+                await _targetSaver.SaveAsync(entry.TargetMetadata, null);
+                group.AddLog($"Rolled back snapshot '{entry.TargetMetadata.SnapshotName}'.");
+            }
         }
 
 
