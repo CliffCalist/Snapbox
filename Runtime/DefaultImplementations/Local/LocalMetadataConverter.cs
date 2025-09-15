@@ -1,6 +1,6 @@
 namespace WhiteArrow.Snapbox
 {
-    public class LocalSnapshotFactory : ISnapshotMetadataConverter
+    public class LocalMetadataConverter : ISnapshotMetadataConverter
     {
         public ISnapshotMetadata Convert(SnapshotMetadataDescriptor descriptor)
         {
