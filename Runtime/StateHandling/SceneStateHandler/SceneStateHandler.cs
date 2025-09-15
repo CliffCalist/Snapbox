@@ -119,7 +119,9 @@ namespace WhiteArrow.Snapbox
 
             foreach (var handler in rootHandlers)
             {
-                descriptors.Add(handler.GetDescriptor());
+                var descriptor = handler.GetDescriptor();
+                if (descriptor != null)
+                    descriptors.Add(descriptor);
 
                 var children = handler.GetChildren();
                 descriptors.AddRange(CollectDescriptorsRecursive(children));
