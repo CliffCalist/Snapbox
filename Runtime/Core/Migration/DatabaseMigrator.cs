@@ -7,6 +7,9 @@ namespace WhiteArrow.Snapbox
 {
     public class DatabaseMigrator : IDisposable
     {
+        private ISnapshotMetadataConverter _sourceConverter;
+        private ISnapshotMetadataConverter _targetConverter;
+
         private readonly ISnapshotLoader _sourceLoader;
         private readonly ISnapshotSaver _targetSaver;
         private readonly SnapboxLogger _logger;
@@ -15,8 +18,15 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public DatabaseMigrator(ISnapshotLoader sourceLoader, ISnapshotSaver targetSaver)
+        public DatabaseMigrator(
+            ISnapshotLoader sourceLoader,
+            ISnapshotMetadataConverter sourceConverter,
+            ISnapshotSaver targetSaver,
+            ISnapshotMetadataConverter targetConverter)
         {
+            _sourceConverter = sourceConverter ?? throw new ArgumentNullException(nameof(sourceConverter));
+            _targetConverter = targetConverter ?? throw new ArgumentNullException(nameof(targetConverter));
+
             _sourceLoader = sourceLoader ?? throw new ArgumentNullException(nameof(sourceLoader));
             _targetSaver = targetSaver ?? throw new ArgumentNullException(nameof(targetSaver));
 
@@ -25,19 +35,30 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public void AddMigrationEntry(SnapshotMigrationEntry entry)
+        public void AddMetadataDescriptor(SnapshotMetadataDescriptor descriptor)
         {
-            _entries.Add(entry ?? throw new ArgumentNullException(nameof(entry)));
+            if (descriptor is null)
+                throw new ArgumentNullException(nameof(descriptor));
+
+            var sourceMetadata = _sourceConverter.Convert(descriptor);
+            var targetMetadata = _targetConverter.Convert(descriptor);
+            var entry = new SnapshotMigrationEntry(sourceMetadata, targetMetadata);
+
+            _entries.Add(entry);
         }
 
-        public void AddMigrationEntriesRange(IEnumerable<SnapshotMigrationEntry> entries)
+        public void AddMetadataDescriptorsRange(IEnumerable<SnapshotMetadataDescriptor> descriptors)
         {
-            _entries.AddRange(entries ?? throw new ArgumentNullException(nameof(entries)));
+            if (descriptors is null)
+                throw new ArgumentNullException(nameof(descriptors));
+
+            foreach (var descriptor in descriptors)
+                AddMetadataDescriptor(descriptor);
         }
 
-        public void AddMigrationEntry(params SnapshotMigrationEntry[] entries)
+        public void AddMetadataDescriptorsRange(params SnapshotMetadataDescriptor[] descriptors)
         {
-            _entries.AddRange(entries ?? throw new ArgumentNullException(nameof(entries)));
+            AddMetadataDescriptorsRange(descriptors as IEnumerable<SnapshotMetadataDescriptor>);
         }
 
 

@@ -2,12 +2,12 @@ using System;
 
 namespace WhiteArrow.Snapbox
 {
-    public class SnapshotMigrationEntry
+    internal class SnapshotMigrationEntry
     {
         public ISnapshotMetadata SourceMetadata { get; }
         public ISnapshotMetadata TargetMetadata { get; }
 
-        internal object Data { get; set; }
+        public object Data { get; set; }
 
 
 
