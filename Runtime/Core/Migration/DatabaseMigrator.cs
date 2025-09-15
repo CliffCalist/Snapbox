@@ -8,10 +8,12 @@ namespace WhiteArrow.Snapbox
     public class DatabaseMigrator : IDisposable
     {
         private ISnapshotMetadataConverter _sourceConverter;
-        private ISnapshotMetadataConverter _targetConverter;
-
         private readonly ISnapshotLoader _sourceLoader;
+        private readonly ISnapshotSaver _sourceSaver;
+
+        private ISnapshotMetadataConverter _targetConverter;
         private readonly ISnapshotSaver _targetSaver;
+
         private readonly SnapboxLogger _logger;
 
         private readonly List<SnapshotMigrationEntry> _entries = new();
@@ -19,15 +21,17 @@ namespace WhiteArrow.Snapbox
 
 
         public DatabaseMigrator(
-            ISnapshotLoader sourceLoader,
             ISnapshotMetadataConverter sourceConverter,
-            ISnapshotSaver targetSaver,
-            ISnapshotMetadataConverter targetConverter)
+            ISnapshotLoader sourceLoader,
+            ISnapshotSaver sourceSaver,
+            ISnapshotMetadataConverter targetConverter,
+            ISnapshotSaver targetSaver)
         {
             _sourceConverter = sourceConverter ?? throw new ArgumentNullException(nameof(sourceConverter));
-            _targetConverter = targetConverter ?? throw new ArgumentNullException(nameof(targetConverter));
-
             _sourceLoader = sourceLoader ?? throw new ArgumentNullException(nameof(sourceLoader));
+            _sourceSaver = sourceSaver ?? throw new ArgumentNullException(nameof(sourceSaver));
+
+            _targetConverter = targetConverter ?? throw new ArgumentNullException(nameof(targetConverter));
             _targetSaver = targetSaver ?? throw new ArgumentNullException(nameof(targetSaver));
 
             _logger = new GameObject("[SNAPBOX MIGRATOR LOGGER]").AddComponent<SnapboxLogger>();
@@ -72,6 +76,9 @@ namespace WhiteArrow.Snapbox
 
             if (result.Status == MigrationStatus.Success)
                 result = await SaveToTargetAsync(debugGroup);
+
+            if (result.Status == MigrationStatus.Success)
+                await DeleteAllFromAsync(_sourceSaver, _entries, debugGroup);
 
             _logger.AddGroup(debugGroup);
             return result;
@@ -119,7 +126,7 @@ namespace WhiteArrow.Snapbox
                 }
                 catch (Exception ex)
                 {
-                    await RollbackTargetAsync(savedEntries, group);
+                    await DeleteAllFromAsync(_targetSaver, savedEntries, group);
 
                     group.AddError($"Failed to save snapshot '{entry.TargetMetadata.SnapshotName}': {ex.Message}");
                     return MigrationResult.Error(ex);
@@ -129,12 +136,12 @@ namespace WhiteArrow.Snapbox
             return MigrationResult.Success();
         }
 
-        private async Task RollbackTargetAsync(IEnumerable<SnapshotMigrationEntry> entries, SnapboxLogGroup group)
+        private async Task DeleteAllFromAsync(ISnapshotSaver saver, IEnumerable<SnapshotMigrationEntry> entries, SnapboxLogGroup group)
         {
             foreach (var entry in entries)
             {
-                await _targetSaver.SaveAsync(entry.TargetMetadata, null);
-                group.AddLog($"Rolled back snapshot '{entry.TargetMetadata.SnapshotName}'.");
+                await saver.SaveAsync(entry.TargetMetadata, null);
+                group.AddLog($"Deleted snapshot '{entry.TargetMetadata.SnapshotName}'.");
             }
         }
 
