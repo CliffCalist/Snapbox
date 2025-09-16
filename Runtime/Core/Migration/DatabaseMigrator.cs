@@ -140,7 +140,7 @@ namespace WhiteArrow.Snapbox
         {
             foreach (var entry in entries)
             {
-                await saver.SaveAsync(entry.TargetMetadata, null);
+                await saver.DeleteAsync(entry.TargetMetadata);
                 group.AddLog($"Deleted snapshot '{entry.TargetMetadata.SnapshotName}'.");
             }
         }
