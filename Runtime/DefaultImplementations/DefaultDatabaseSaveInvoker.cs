@@ -5,7 +5,6 @@ namespace WhiteArrow.Snapbox
 {
     public class DefaultDatabaseSaveInvoker : MonoBehaviour
     {
-        [SerializeField] private bool _useOnQuitSaving = false;
         [SerializeField, Min(0)] private float _timeOffset = 1;
         [SerializeField, Min(MINIMUM_TIME_RATE_VALUE)] private float _timeRate = 15;
 
@@ -61,41 +60,6 @@ namespace WhiteArrow.Snapbox
         {
             PreSave?.Invoke();
             _ = _database.SaveAllSnapshotsAsync();
-        }
-
-
-
-        private void OnDestroy() => SaveOnExit();
-
-        private void OnApplicationPause(bool pauseStatus)
-        {
-            if (pauseStatus) SaveOnExit();
-            {
-                _isOnExitSaved = false;
-                _timeElapsed = 0;
-            }
-        }
-
-        private void OnApplicationFocus(bool focusStatus)
-        {
-            if (focusStatus) SaveOnExit();
-            else
-            {
-                _isOnExitSaved = false;
-                _timeElapsed = 0;
-            }
-        }
-
-        private void OnApplicationQuit() => SaveOnExit();
-
-        private void SaveOnExit()
-        {
-            if (_useOnQuitSaving && _database != null && !_isOnExitSaved)
-            {
-                _isOnExitSaved = true;
-                PreSave?.Invoke();
-                _database.SaveAllSnapshots();
-            }
         }
     }
 }
