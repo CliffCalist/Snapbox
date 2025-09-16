@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -78,7 +79,7 @@ namespace WhiteArrow.Snapbox
                 result = await SaveToTargetAsync(debugGroup);
 
             if (result.Status == MigrationStatus.Success)
-                await DeleteAllFromAsync(_sourceSaver, _entries, debugGroup);
+                await DeleteAllFromAsync(_sourceSaver, _entries.Select(e => e.SourceMetadata), debugGroup);
 
             _logger.AddGroup(debugGroup);
             return result;
@@ -126,7 +127,7 @@ namespace WhiteArrow.Snapbox
                 }
                 catch (Exception ex)
                 {
-                    await DeleteAllFromAsync(_targetSaver, savedEntries, group);
+                    await DeleteAllFromAsync(_targetSaver, _entries.Select(e => e.TargetMetadata), group);
 
                     group.AddError($"Failed to save snapshot '{entry.TargetMetadata.SnapshotName}': {ex.Message}");
                     return MigrationResult.Error(ex);
@@ -136,12 +137,12 @@ namespace WhiteArrow.Snapbox
             return MigrationResult.Success();
         }
 
-        private async Task DeleteAllFromAsync(ISnapshotSaver saver, IEnumerable<SnapshotMigrationEntry> entries, SnapboxLogGroup group)
+        private async Task DeleteAllFromAsync(ISnapshotSaver saver, IEnumerable<ISnapshotMetadata> metadata, SnapboxLogGroup group)
         {
-            foreach (var entry in entries)
+            foreach (var meta in metadata)
             {
-                await saver.DeleteAsync(entry.TargetMetadata);
-                group.AddLog($"Deleted snapshot '{entry.TargetMetadata.SnapshotName}'.");
+                await saver.DeleteAsync(meta);
+                group.AddLog($"Deleted snapshot '{meta.SnapshotName}'.");
             }
         }
 
