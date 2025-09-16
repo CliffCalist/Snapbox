@@ -150,7 +150,7 @@ namespace WhiteArrow.Snapbox
 
         public void Dispose()
         {
-            UnityEngine.Object.Destroy(_logger);
+            _logger.FinalizeAndDestroy();
         }
     }
 }

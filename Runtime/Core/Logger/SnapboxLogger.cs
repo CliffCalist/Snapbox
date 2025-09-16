@@ -8,6 +8,8 @@ namespace WhiteArrow.Snapbox
         private readonly object _lock = new();
         private readonly Queue<SnapboxLogGroup> _groups = new();
 
+        private bool _isShuttingDown;
+
 
 
         public void AddGroup(SnapboxLogGroup group)
@@ -34,7 +36,17 @@ namespace WhiteArrow.Snapbox
                     else
                         Debug.Log(log);
                 }
+
+                if (_isShuttingDown == true)
+                    Destroy(gameObject);
             }
+        }
+
+
+
+        public void FinalizeAndDestroy()
+        {
+            _isShuttingDown = true;
         }
     }
 }
