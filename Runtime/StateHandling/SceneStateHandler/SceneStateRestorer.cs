@@ -36,6 +36,8 @@ namespace WhiteArrow.Snapbox
 
         private IEnumerator RestoreEntityStateRecursive(IEnumerable<EntityStateHandler> handlers)
         {
+            var isNewMetadataAdded = false;
+
             foreach (var handler in handlers)
             {
                 if (!handler.IsRegistered)
@@ -45,14 +47,18 @@ namespace WhiteArrow.Snapbox
                     {
                         var metadata = _context.MetadataConvertor.Convert(descriptor);
                         _context.Database.AddMetadata(metadata);
+                        isNewMetadataAdded = true;
                     }
 
                     handler.MarkAsRegistered();
                 }
             }
 
-            var task = Task.Run(async () => await _context.Database.LoadNewSnapshotsAsync());
-            yield return new WaitWhile(() => !task.IsCompleted);
+            if (isNewMetadataAdded)
+            {
+                var task = Task.Run(async () => await _context.Database.LoadNewSnapshotsAsync());
+                yield return new WaitWhile(() => !task.IsCompleted);
+            }
 
             foreach (var handler in handlers)
             {
