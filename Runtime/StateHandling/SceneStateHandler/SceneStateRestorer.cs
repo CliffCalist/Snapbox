@@ -96,7 +96,7 @@ namespace WhiteArrow.Snapbox
         private void OnNewChildrenAdded(EntityStateHandler handler)
         {
             _pendingChildCoroutines++;
-            Coroutines.Launch(RestoreChildrenCoroutine(handler));
+            _context.StartCoroutine(RestoreChildrenCoroutine(handler));
         }
 
         private IEnumerator RestoreChildrenCoroutine(EntityStateHandler handler)

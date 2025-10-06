@@ -2,8 +2,7 @@
     "name": "WhiteArrowEditor.SnapboxSDK",
     "rootNamespace": "WhiteArrowEditor.SnapboxSDK",
     "references": [
-        "GUID:4f6318e562ba64ed4b60c64ec24e7f59",
-        "GUID:ef71e68570a7e4fc283bdeeadf4597ae"
+        "GUID:4f6318e562ba64ed4b60c64ec24e7f59"
     ],
     "includePlatforms": [
         "Editor"
