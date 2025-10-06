@@ -27,7 +27,6 @@ namespace WhiteArrow.Snapbox
         private bool _isInitialized;
         private Database _database;
         private float _timeElapsed;
-        private bool _isOnExitSaved;
 
         public const float MINIMUM_TIME_RATE_VALUE = 1F;
 

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace WhiteArrow.Snapbox
 {
-    public class SnapboxLogGroup
+    internal class SnapboxLogGroup
     {
         private readonly string _header;
         private readonly Queue<string> _logs = new();

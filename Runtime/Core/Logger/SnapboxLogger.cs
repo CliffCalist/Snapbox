@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WhiteArrow.Snapbox
 {
-    public class SnapboxLogger : MonoBehaviour
+    internal class SnapboxLogger : MonoBehaviour
     {
         private readonly object _lock = new();
         private readonly Queue<SnapboxLogGroup> _groups = new();
@@ -12,7 +12,7 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public void AddGroup(SnapboxLogGroup group)
+        internal void AddGroup(SnapboxLogGroup group)
         {
             lock (_lock)
             {
@@ -44,7 +44,7 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public void FinalizeAndDestroy()
+        internal void FinalizeAndDestroy()
         {
             _isShuttingDown = true;
         }
