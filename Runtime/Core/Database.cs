@@ -108,7 +108,9 @@ namespace WhiteArrow.Snapbox
             }
 
             await Task.WhenAll(tasks);
-            _logger.AddGroup(logGroup);
+
+            if (logGroup.HasLogs)
+                _logger.AddGroup(logGroup);
         }
 
         public async Task SaveAllSnapshotsAsync()
@@ -142,7 +144,8 @@ namespace WhiteArrow.Snapbox
                 }
             }
 
-            _logger.AddGroup(logGroup);
+            if (logGroup.HasLogs)
+                _logger.AddGroup(logGroup);
         }
 
 
@@ -178,7 +181,8 @@ namespace WhiteArrow.Snapbox
                 }
             }
 
-            _logger.AddGroup(logGroup);
+            if (logGroup.HasLogs)
+                _logger.AddGroup(logGroup);
         }
 
 

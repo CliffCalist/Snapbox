@@ -10,6 +10,7 @@ namespace WhiteArrow.Snapbox
 
 
         public bool HasError { get; private set; }
+        public bool HasLogs => _logs.Count > 0;
 
 
 
