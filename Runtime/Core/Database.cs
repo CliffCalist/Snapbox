@@ -150,43 +150,6 @@ namespace WhiteArrow.Snapbox
 
 
 
-        public void SaveAllSnapshots()
-        {
-            var logGroup = new SnapboxLogGroup("Saving all snapshots");
-
-            foreach (var kvp in _metadata)
-            {
-                if (kvp.Value.IsChanged)
-                {
-                    try
-                    {
-                        var snapshot = _snapshotsMap[kvp.Key];
-                        if (snapshot == null && kvp.Value.IsDeleted)
-                        {
-                            _saver.Delete(kvp.Value);
-                            kvp.Value.IsChanged = false;
-                            logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' deleted successfully.");
-                        }
-                        else if (snapshot != null)
-                        {
-                            _saver.Save(kvp.Value, snapshot);
-                            kvp.Value.IsChanged = false;
-                            logGroup.AddLog($"Snapshot for key '{kvp.Value.SnapshotName}' saved successfully.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        logGroup.AddError($"Error saving Snapshot for key '{kvp.Value.SnapshotName}': {ex.Message}");
-                    }
-                }
-            }
-
-            if (logGroup.HasLogs)
-                _logger.AddGroup(logGroup);
-        }
-
-
-
         public T GetSnapshot<T>(string key)
         {
             if (!_snapshotsMap.ContainsKey(key))
